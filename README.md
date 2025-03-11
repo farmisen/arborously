@@ -1,6 +1,6 @@
-# Git Branch Generator Extension
+# Arborously
 
-A browser extension that automatically generates standardized git branch names from ticket information across various ticketing systems. Starting with Trello support and expanding to other platforms like GitHub Issues, Jira, and Bugzilla. The extension will help developers maintain consistent branch naming conventions without manual effort.
+Arborously is browser extension that automatically generates standardized git branch names from ticket information across various ticketing systems. Starting with Trello support and expanding to other platforms like GitHub Issues, Jira, and Bugzilla. The extension will help developers maintain consistent branch naming conventions without manual effort.
 
 ## High-Level Description
 
