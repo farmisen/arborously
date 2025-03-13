@@ -1,16 +1,12 @@
-import {
-  Github,
-  HelpCircle,
-  Settings,
-} from "lucide-react";
+import { Github, HelpCircle, Settings } from "lucide-react"
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button"
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+  TooltipTrigger
+} from "@/components/ui/tooltip"
 
 const Icons = () => {
   return (
@@ -57,8 +53,7 @@ const Icons = () => {
         </Tooltip>
       </TooltipProvider>
     </div>
-  );
-};
-
+  )
+}
 
 export default Icons

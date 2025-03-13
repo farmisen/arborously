@@ -9,18 +9,22 @@ The Git Branch Generator will detect when you're viewing a ticket in a supported
 ## Functional Requirements
 
 ### Core Features
+
 1. **Ticket Integration**
+
    - Parse Trello card information (ID, title, labels)
    - Extract relevant metadata from the current card
    - Support for detecting when user is viewing a Trello card
 
 2. **Branch Name Generation**
+
    - Provide configurable templating system for branch name patterns
    - Support variables like `${id}`, `${title}`, `${username}`, `${tag}`
    - Sanitize inputs (replace spaces with hyphens, remove special characters)
    - Enforce max length limits for git branch names
 
 3. **User Configuration**
+
    - Store and retrieve username
    - Manage predefined tags (feat, fix, chore, docs, style, refactor, test, etc.)
    - Save multiple templates for different projects or workflows
@@ -34,16 +38,19 @@ The Git Branch Generator will detect when you're viewing a ticket in a supported
 ## Non-Functional Requirements
 
 1. **Technology Stack**
+
    - Use WXT (https://wxt.dev/) Web Extension Framework
    - TypeScript for all development
    - Modular architecture to support future ticketing systems
 
 2. **Performance**
+
    - Extension should not noticeably impact page load times
    - Branch name generation should be instantaneous
    - Minimal memory footprint
 
 3. **Security & Privacy**
+
    - Store user preferences in local browser storage only
    - Request minimal permissions required for functionality
 
@@ -53,6 +60,7 @@ The Git Branch Generator will detect when you're viewing a ticket in a supported
 ## Domain Requirements
 
 1. **Templating System**
+
    - Support for common git branch naming patterns:
      - `${tag}/${id}-${title}`
      - `${username}/${tag}/${title}`
@@ -61,11 +69,13 @@ The Git Branch Generator will detect when you're viewing a ticket in a supported
    - Special functions like `lowercase()`, `truncate(n)` for formatting
 
 2. **Tag Management**
+
    - Predefined list of common tags: feature, fix, chore, docs, style, refactor, test
    - Ability to add, remove, or customize tags
    - Option to set default tag for different ticket types
 
 3. **String Transformation**
+
    - Convert spaces to hyphens or underscores (configurable)
    - Remove special characters not allowed in git branch names
    - Automatically truncate long titles to reasonable length
