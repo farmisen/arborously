@@ -2,7 +2,6 @@ export type TicketInfo = {
   id?: string
   title?: string
   category?: string
-  url?: string
   description?: string
   status?: string
   tags?: string[]
@@ -15,3 +14,8 @@ export enum IconType {
 }
 
 export type IconPaths = Record<string, string>
+
+export type GeneratorOptions = {
+  lower: boolean
+  replacement: string
+}
