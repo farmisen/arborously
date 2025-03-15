@@ -7,7 +7,6 @@ export class GithubIssuesProvider implements UrlParsingProvider {
   // Matches GitHub Issues URLs
   // Examples:
   // - https://github.com/owner/repo/issues/123
-  // - https://github.com/owner/repo/pull/123
   private readonly GITHUB_ISSUES_REGEX =
     /^https?:\/\/(?:www\.)?github\.com\/([^\/]+)\/([^\/]+)\/(issues)\/(\d+)/
 
@@ -34,8 +33,6 @@ export class GithubIssuesProvider implements UrlParsingProvider {
 
     return {
       id: issueId,
-      title: `${owner}/${repo} #${issueId}`,
-      url: url,
       metadata: {
         owner,
         repo,

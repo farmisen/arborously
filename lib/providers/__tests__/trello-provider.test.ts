@@ -33,9 +33,9 @@ describe("TrelloProvider", () => {
       const result = provider.parseUrl(url)
 
       expect(result).toEqual({
-        id: "abcd1234",
+        id: undefined,
         title: undefined,
-        category: "trello"
+        metadata: { uuid: "abcd1234" }
       })
     })
 
@@ -44,9 +44,9 @@ describe("TrelloProvider", () => {
       const result = provider.parseUrl(url)
 
       expect(result).toEqual({
-        id: "abcd1234",
+        id: "123",
         title: "card title",
-        category: "trello"
+        metadata: { uuid: "abcd1234" }
       })
     })
 
@@ -55,9 +55,9 @@ describe("TrelloProvider", () => {
       const result = provider.parseUrl(url)
 
       expect(result).toEqual({
-        id: "abcd1234",
+        id: "123",
         title: "implement new feature for project",
-        category: "trello"
+        metadata: { uuid: "abcd1234" }
       })
     })
 

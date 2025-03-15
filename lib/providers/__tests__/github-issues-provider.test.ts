@@ -45,8 +45,6 @@ describe("GithubIssuesProvider", () => {
 
       expect(result).toEqual({
         id: "123",
-        title: "facebook/react #123",
-        url: url,
         metadata: {
           owner: "facebook",
           repo: "react",

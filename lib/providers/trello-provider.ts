@@ -20,17 +20,14 @@ export class TrelloProvider implements UrlParsingProvider {
       throw new Error("Not a valid Trello card URL")
     }
 
-    // match[1] = card ID (abcd1234)
-    // match[2] = card number (123) - optional
+    // match[1] = card UUID (abcd1234)
+    // match[2] = card number (123)
     // match[3] = card title slug (card-title) - optional
 
-    const cardId = match[1]
-    const title = match[3] ? match[3].replace(/-/g, " ") : undefined
-
     return {
-      id: cardId,
-      title: title,
-      category: "trello"
+      id: match[2],
+      title: match[3] ? match[3].replace(/-/g, " ") : undefined,
+      metadata: { uuid: match[1] }
     }
   }
 }
