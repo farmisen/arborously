@@ -1,91 +1,85 @@
-# Arborously
+# Arborously 🌳
 
-Arborously is browser extension that automatically generates standardized git branch names from ticket information across various ticketing systems. Starting with Trello support and expanding to other platforms like GitHub Issues, Jira, and Bugzilla. The extension will help developers maintain consistent branch naming conventions without manual effort.
+A browser extension that automatically generates standardized git branch names from ticket information across various ticketing systems.
 
-## High-Level Description
+## Features
 
-The Git Branch Generator will detect when you're viewing a ticket in a supported ticketing system, extract relevant information, and generate a git branch name according to customizable templates. Users can configure their preferences including username, preferred branch prefixes, and naming patterns. The extension will appear as a small icon in the browser toolbar.
+- Automatically extracts ticket information from Trello cards
+- Generates git branch names based on customizable templates
+- One-click copy to clipboard
+- Support for common git branch naming conventions
+- Cross-browser compatibility (Chrome, Firefox, Edge)
 
-## Functional Requirements
+## Installation
 
-### Core Features
+### Chrome/Edge
 
-1. **Ticket Integration**
+1. Download the latest release from the [Releases page](https://github.com/yourusername/arborously/releases)
+2. Unzip the file
+3. Open Chrome/Edge and navigate to `chrome://extensions` or `edge://extensions`
+4. Enable "Developer mode"
+5. Click "Load unpacked" and select the unzipped folder
 
-   - Parse Trello card information (ID, title, labels)
-   - Extract relevant metadata from the current card
-   - Support for detecting when user is viewing a Trello card
+### Firefox
 
-2. **Branch Name Generation**
+1. Download the latest Firefox release from the [Releases page](https://github.com/yourusername/arborously/releases)
+2. Open Firefox and navigate to `about:addons`
+3. Click the gear icon and select "Install Add-on From File..."
+4. Select the downloaded `.xpi` file
 
-   - Provide configurable templating system for branch name patterns
-   - Support variables like `${id}`, `${title}`, `${username}`, `${tag}`
-   - Sanitize inputs (replace spaces with hyphens, remove special characters)
-   - Enforce max length limits for git branch names
+## Development
 
-3. **User Configuration**
+Arborously is built with [WXT](https://wxt.dev/), React, TypeScript, and Tailwind CSS.
 
-   - Store and retrieve username
-   - Manage predefined tags (feat, fix, chore, docs, style, refactor, test, etc.)
-   - Save multiple templates for different projects or workflows
-   - Default template configuration
+### Prerequisites
 
-4. **User Interface**
-   - Popup interface when clicking extension icon
-   - Preview of generated branch name
-   - One-click copy to clipboard functionality
+- Node.js 16+
+- pnpm
 
-## Non-Functional Requirements
+### Setup
 
-1. **Technology Stack**
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/arborously.git
+cd arborously
 
-   - Use WXT (https://wxt.dev/) Web Extension Framework
-   - TypeScript for all development
-   - Modular architecture to support future ticketing systems
+# Install dependencies
+pnpm install
+```
 
-2. **Performance**
+### Development Commands
 
-   - Extension should not noticeably impact page load times
-   - Branch name generation should be instantaneous
-   - Minimal memory footprint
+```bash
+# Start development mode for Chrome
+pnpm dev
 
-3. **Security & Privacy**
+# Start development mode for Firefox
+pnpm dev:firefox
 
-   - Store user preferences in local browser storage only
-   - Request minimal permissions required for functionality
+# Build for Chrome
+pnpm build
 
-4. **Portability**
-   - Cross-browser compatibility (Chrome, Firefox, Edge)
+# Build for Firefox
+pnpm build:firefox
 
-## Domain Requirements
+# Run TypeScript typecheck
+pnpm compile
 
-1. **Templating System**
+# Create distributable zip
+pnpm zip
+```
 
-   - Support for common git branch naming patterns:
-     - `${tag}/${id}-${title}`
-     - `${username}/${tag}/${title}`
-     - `${tag}/issue-${id}`
-   - Variables should be enclosed in `${}` syntax
-   - Special functions like `lowercase()`, `truncate(n)` for formatting
+## Usage
 
-2. **Tag Management**
+1. Navigate to a Trello card
+2. Click on the Arborously extension icon in your browser toolbar
+3. Select a template and tag for your branch
+4. Click "Copy to Clipboard" to copy the generated branch name
 
-   - Predefined list of common tags: feature, fix, chore, docs, style, refactor, test
-   - Ability to add, remove, or customize tags
-   - Option to set default tag for different ticket types
+## Contributing
 
-3. **String Transformation**
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-   - Convert spaces to hyphens or underscores (configurable)
-   - Remove special characters not allowed in git branch names
-   - Automatically truncate long titles to reasonable length
-   - Convert to lowercase by default (configurable)
+## License
 
-4. **Trello Integration**
-   - Parse card ID from URL pattern
-   - Extract card title, labels, and other metadata
-   - Detect card type based on labels or lists to suggest appropriate tags
-
-## Implementation Approach
-
-This MVP will focus on providing a reliable, user-friendly experience for Trello users while establishing a foundation that can be expanded to other ticketing systems in future releases.
+[MIT](LICENSE)

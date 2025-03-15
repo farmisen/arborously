@@ -1,5 +1,5 @@
 {
-  "name": "tailwindcss",
+  "name": "arborously",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -14,7 +14,9 @@
     "postinstall": "wxt prepare",
     "lint": "eslint --ext .ts,.tsx .",
     "lint:fix": "eslint --ext .ts,.tsx . --fix",
-    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "devDependencies": {
     "@eslint/compat": "^1.2.7",
@@ -36,6 +38,7 @@
     "eslint-plugin-unused-imports": "^4.1.4",
     "prettier": "^3.5.3",
     "typescript": "^5.8.2",
+    "vitest": "^3.0.8",
     "wxt": "^0.19.29"
   },
   "dependencies": {
@@ -44,6 +47,7 @@
     "@radix-ui/react-separator": "^1.1.2",
     "@radix-ui/react-slot": "^1.1.2",
     "@radix-ui/react-tooltip": "^1.1.8",
+    "@webext-core/proxy-service": "^1.2.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.479.0",
