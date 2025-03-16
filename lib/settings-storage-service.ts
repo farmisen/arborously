@@ -19,13 +19,15 @@ export type SettingsStorageService = {
 const createSettingsStorageService = (): SettingsStorageService => {
   const service: SettingsStorageService = {
     async set(settings: Settings): Promise<Settings> {
+      let result: Settings
       try {
         await storage.setItem("settings", settings)
+        result = await this.get()
       } catch (error) {
         console.error("Failed to set settings:", error)
-      } finally {
-        return this.get()
+        result = await this.get()
       }
+      return result
     },
 
     async get(): Promise<Settings> {
