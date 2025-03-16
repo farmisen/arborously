@@ -18,7 +18,7 @@ export const DEFAULT_SETTINGS: Settings = {
     { id: "3", name: "chore" },
     { id: "4", name: "docs" },
     { id: "5", name: "refactor" },
-    { id: "5", name: "test" }
+    { id: "6", name: "test" }
   ],
   defaultCategory: "1",
   enforceLowercase: true,
