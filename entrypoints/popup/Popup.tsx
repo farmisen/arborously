@@ -7,35 +7,28 @@ import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import Icons from "@/entrypoints/popup/Icons"
 import { generateBranchName } from "@/lib/branch-name-generator"
-import { getUrlParsingService } from "@/lib/url-parsing-service"
+import { getTicketProvidersService } from "@/lib/ticket-providers-service"
 
-const urlParsingService = getUrlParsingService()
+const ticketProvidersService = getTicketProvidersService()
 
 const Popup = () => {
   const [copied, setCopied] = React.useState(false)
   const [branchName, setBranchName] = React.useState("")
 
   const fetchBranchName = useCallback(async () => {
-    console.log("fetchBranchName called")
     try {
-      console.log("Before tabs query")
       const tabs = await browser.tabs.query({ active: true, currentWindow: true })
-      console.log("Tabs query result:", tabs)
       if (tabs.length > 0) {
         const tab = tabs[0]
         const url = tab.url ?? tab.pendingUrl
-        console.log("Current URL:", url)
-        const isSupported = await urlParsingService.isSupported(url ?? "")
-        console.log("URL supported:", isSupported)
+        const isSupported = await ticketProvidersService.isSupported(url ?? "")
         if (isSupported) {
-          const ticketInfo = await urlParsingService.parseUrl(url ?? "")
-          console.log("Ticket info:", ticketInfo)
+          const ticketInfo = await ticketProvidersService.parseUrl(url ?? "")
           const name = generateBranchName(
             "{username}/{id}-{title}",
             ticketInfo,
             "farmisen"
           )
-          console.log("Generated branch name:", name)
           setBranchName(name)
         }
       }
@@ -45,9 +38,6 @@ const Popup = () => {
   }, [])
 
   useEffect(() => {
-    console.log("Popup mounted")
-    console.log("Browser object available:", typeof browser !== "undefined")
-    console.log("urlParsingService available:", !!urlParsingService)
     try {
       fetchBranchName().catch((error) =>
         console.error("Error executing fetchBranchName:", error)

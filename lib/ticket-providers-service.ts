@@ -4,25 +4,24 @@ import { registerAllProviders } from "@/lib/providers"
 import { type TicketInfo } from "@/lib/types"
 
 // Base provider interface that platform-specific parsers must implement
-export interface UrlParsingProvider {
+export interface TicketProvider {
   name: string
   isSupported(url: string): boolean
   parseUrl(url: string): TicketInfo
 }
 
-export type UrlParsingService = {
-  registerProvider(provider: UrlParsingProvider): void
+export type TicketProvidersService = {
+  registerProvider(provider: TicketProvider): void
   isSupported(url: string): boolean
   parseUrl(url: string): TicketInfo
-  getProviders(): UrlParsingProvider[]
+  getProviders(): TicketProvider[]
 }
 
-const createUrlParsingService = (): UrlParsingService => {
-  // Registry of providers
-  const providers: UrlParsingProvider[] = []
+const createTicketProvidersService = (): TicketProvidersService => {
+  const providers: TicketProvider[] = []
 
   const service = {
-    registerProvider(provider: UrlParsingProvider) {
+    registerProvider(provider: TicketProvider) {
       providers.push(provider)
     },
 
@@ -49,7 +48,5 @@ const createUrlParsingService = (): UrlParsingService => {
   return service
 }
 
-export const [registerUrlParsingService, getUrlParsingService] = defineProxyService(
-  "url-parsing-service",
-  createUrlParsingService
-)
+export const [registerTicketProvidersService, getTicketProvidersService] =
+  defineProxyService("ticket-providers-service", createTicketProvidersService)

@@ -1,7 +1,10 @@
+import { type TicketProvider } from "@/lib/ticket-providers-service"
 import { type TicketInfo } from "@/lib/types"
-import { type UrlParsingProvider } from "@/lib/url-parsing-service"
 
-export class GithubIssuesProvider implements UrlParsingProvider {
+// This provider does not extract the title from the URL
+// and should be updated to parse the title from the page
+
+export class GithubIssuesProvider implements TicketProvider {
   name = "github-issues"
 
   // Matches GitHub Issues URLs
@@ -20,11 +23,6 @@ export class GithubIssuesProvider implements UrlParsingProvider {
     if (!match) {
       throw new Error("Not a valid GitHub Issues URL")
     }
-
-    // match[1] = owner
-    // match[2] = repo
-    // match[3] = type (issues or pull)
-    // match[4] = issue ID
 
     const owner = match[1]
     const repo = match[2]

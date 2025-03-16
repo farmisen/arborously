@@ -1,7 +1,7 @@
+import { type TicketProvider } from "@/lib/ticket-providers-service"
 import { type TicketInfo } from "@/lib/types"
-import { type UrlParsingProvider } from "@/lib/url-parsing-service"
 
-export class TrelloProvider implements UrlParsingProvider {
+export class TrelloProvider implements TicketProvider {
   name = "trello"
 
   // Matches Trello card URLs
@@ -19,10 +19,6 @@ export class TrelloProvider implements UrlParsingProvider {
     if (!match) {
       throw new Error("Not a valid Trello card URL")
     }
-
-    // match[1] = card UUID (abcd1234)
-    // match[2] = card number (123)
-    // match[3] = card title slug (card-title) - optional
 
     return {
       id: match[2],

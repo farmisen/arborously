@@ -1,15 +1,18 @@
 import { getIconPaths } from "@/lib/icon-utils"
+import { registerSettingsStorageService } from "@/lib/settings-storage-service"
+import { registerTicketProvidersService } from "@/lib/ticket-providers-service"
 import { IconType } from "@/lib/types"
-import { registerUrlParsingService } from "@/lib/url-parsing-service"
 
-const urlParsingService = registerUrlParsingService()
+// Register services
+const ticketProvidersService = registerTicketProvidersService()
+registerSettingsStorageService()
 
 // Helper function to handle tab changes and avoid async in event listeners
 const handleTabChange = async (tabId: number) => {
   const tab = await browser.tabs.get(tabId)
   if (tab.active) {
     const url = tab.url ?? tab.pendingUrl
-    const isSupported = urlParsingService.isSupported(url ?? "")
+    const isSupported = ticketProvidersService.isSupported(url ?? "")
     const iconPaths = getIconPaths(isSupported ? IconType.TREE : IconType.TRUNK)
     await browser.action.setIcon({ path: iconPaths })
   }

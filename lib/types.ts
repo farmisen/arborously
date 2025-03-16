@@ -19,3 +19,28 @@ export type GeneratorOptions = {
   lower: boolean
   replacement: string
 }
+
+export type Template = {
+  id: string
+  name: string
+  template: string
+}
+
+export type Category = {
+  id: string
+  name: string
+}
+
+export type NonEmptyCategoryArray = [Category, ...Category[]]
+
+export type NonEmptyTemplateArray = [Template, ...Template[]]
+
+export type Settings = {
+  username: string
+  templates: NonEmptyTemplateArray
+  defaultTemplate: string
+  categories: NonEmptyCategoryArray
+  defaultCategory: string
+  enforceLowercase: boolean
+  replacementCharacter: string
+}
