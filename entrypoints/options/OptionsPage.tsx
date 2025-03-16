@@ -33,7 +33,7 @@ export const formSchema = z.object({
     .min(2, {
       message: "Username must be at least 2 characters."
     })
-    .refine((val) => !val || hasInvalidGitBranchChars(val), {
+    .refine((val) => !val || !hasInvalidGitBranchChars(val), {
       message: "Username Contains invalid characters."
     })
     .optional()
@@ -98,7 +98,7 @@ export const formSchema = z.object({
           .min(2, {
             message: "Category name must be at least 2 characters."
           })
-          .refine((val) => hasInvalidGitBranchChars(val), {
+          .refine((val) => !hasInvalidGitBranchChars(val), {
             message: "Category name Contains invalid characters."
           })
       })

@@ -1,5 +1,5 @@
 import { defineProxyService } from "@webext-core/proxy-service"
-import { defineExtensionStorage, localExtStorage } from "@webext-core/storage"
+import { defineExtensionStorage } from "@webext-core/storage"
 
 import { DEFAULT_SETTINGS } from "@/lib/constants"
 
@@ -19,13 +19,23 @@ export type SettingsStorageService = {
 const createSettingsStorageService = (): SettingsStorageService => {
   const service: SettingsStorageService = {
     async set(settings: Settings): Promise<Settings> {
-      await localExtStorage.setItem("settings", settings)
-      return this.get()
+      try {
+        await storage.setItem("settings", settings)
+      } catch (error) {
+        console.error("Failed to set settings:", error)
+      } finally {
+        return this.get()
+      }
     },
 
     async get(): Promise<Settings> {
-      const settings = await storage.getItem("settings")
-      return settings ?? DEFAULT_SETTINGS
+      try {
+        const settings = await storage.getItem("settings")
+        return settings ?? DEFAULT_SETTINGS
+      } catch (error) {
+        console.error("Failed to get settings:", error)
+        return DEFAULT_SETTINGS
+      }
     },
 
     reset(): Promise<Settings> {
