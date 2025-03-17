@@ -14,29 +14,28 @@ A browser extension that automatically generates standardized git branch names f
 
 ### Chrome/Edge
 
-1. Build the extension for Firefox: `pnpm wxt zip`
+1. Build the extension for Firefox: `pnpm build`
 2. Open Chrome/Edge and navigate to `chrome://extensions` or `edge://extensions`
 3. Enable "Developer mode"
 4. Click "Load unpacked" and select `.output/chrome-mv3` folder
 
 ### Firefox
 
-1. Build the extension for Firefox: `pnpm wxt zip -b firefox`
+1. Build the extension for Firefox: `pnpm zip:firefox`
 2. Open Firefox and navigate to `about:debugging`
 3. Click "This Firefox" in the left sidebar
-4. Click "Load Temporary Add-on..." and select `.output/arborously-x-y-z-firefoz.zip
-6. The extension will be loaded temporarily until you restart Firefox 
+4. Click "Load Temporary Add-on..." and select `.output/arborously-x-y-z-firefox.zip
+5. The extension will be loaded temporarily until you restart Firefox
 
 ### Firefox Nightly
 
 1. In the Firefox Nightly go to `about:config`
 2. Set `xpinstall.signatures.required` to false
-3. Build the extension for Firefox: `pnpm wxt zip -b firefox`
-4. Go to  `about:addons`
+3. Build the extension for Firefox: `pnpm zip:firefox`
+4. Go to `about:addons`
 5. Click the cogwheel icon
-6. Select "Install Add-on From File..."  and select `.output/arborously-x-y-z-firefoz.zip
+6. Select "Install Add-on From File..." and select `.output/arborously-x-y-z-firefox.zip
 7. The extension will persist across restarts
-
 
 ## Development
 
