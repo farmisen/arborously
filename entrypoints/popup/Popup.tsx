@@ -30,8 +30,13 @@ const Popup = () => {
           const template = settings.templates.find(
             (t) => t.id === settings.defaultTemplateId
           )
+
+          if (!template) {
+            throw new Error(`Template #${settings.defaultTemplateId} not found`)
+          }
+
           const name = generateBranchName(
-            template!.template,
+            template.template,
             ticketInfo,
             settings.username
           )
