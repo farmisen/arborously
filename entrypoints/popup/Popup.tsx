@@ -200,12 +200,14 @@ const Popup = () => {
               id="generated-branch"
               value={branchName}
               readOnly
+              disabled
               className="rounded-r-none"
             />
             <Button
               onClick={copyToClipboard}
               variant="secondary"
-              className="rounded-l-none">
+              className="rounded-l-none"
+              disabled={!branchName}>
               {copied ? (
                 <Check className="h-4 w-4" />
               ) : (
