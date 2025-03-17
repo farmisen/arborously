@@ -4,6 +4,11 @@ import { defineConfig } from "wxt"
 // See https://wxt.dev/api/config.html
 export default defineConfig({
   manifest: {
+    browser_specific_settings: {
+      gecko: {
+        id: "arborously@cxodery-royale.com"
+      }
+    },
     permissions: ["tabs", "storage"],
     icons: {
       16: "icon/trunk-16.png",
