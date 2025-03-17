@@ -26,6 +26,15 @@ const Popup = () => {
         const isSupported = await ticketProvidersService.isSupported(url ?? "")
         if (isSupported) {
           const settings = await settingsStorageService.get()
+          const defaultCategory = settings.categories.find(
+            (c) => c.id === settings.defaultCategoryId
+          )
+
+          if (!defaultCategory) {
+            console.error(`Category #${settings.defaultCategoryId} not found`)
+            throw new Error(`Category #${settings.defaultCategoryId} not found`)
+          }
+
           const ticketInfo = await ticketProvidersService.parseUrl(url ?? "")
           const template = settings.templates.find(
             (t) => t.id === settings.defaultTemplateId
@@ -38,7 +47,8 @@ const Popup = () => {
           const name = generateBranchName(
             template.template,
             ticketInfo,
-            settings.username
+            settings.username,
+            defaultCategory.name
           )
           setBranchName(name)
         }

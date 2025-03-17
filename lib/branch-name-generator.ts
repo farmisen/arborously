@@ -13,10 +13,11 @@ export const generateBranchName = (
   urlTemplate: string,
   ticketInfo: TicketInfo,
   username: string,
+  category: string,
   options: GeneratorOptions = defaultOptions
 ) => {
   // should error if a template field is missing a value from TicketInfo
-  const { id, title, category } = ticketInfo
+  const { id, title, category: ticketCategory } = ticketInfo
   const info = { id, title, category, username }
   const missing = [] as string[]
 
@@ -42,5 +43,5 @@ export const generateBranchName = (
     .replace("{id}", processField(id))
     .replace("{title}", processField(title))
     .replace("{username}", username) // Username is not processed
-    .replace("{category}", processField(category))
+    .replace("{category}", processField(ticketCategory ?? category))
 }
