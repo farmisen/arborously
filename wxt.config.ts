@@ -6,7 +6,7 @@ export default defineConfig({
   manifest: {
     browser_specific_settings: {
       gecko: {
-        id: "arborously@cxodery-royale.com"
+        id: "arborously@codery-royale.com"
       }
     },
     permissions: ["tabs", "storage"],
