@@ -14,7 +14,7 @@ const handleTabChange = async (tabId: number) => {
     const url = tab.url ?? tab.pendingUrl
     const isSupported = ticketProvidersService.isSupported(url ?? "")
     const iconPaths = getIconPaths(isSupported ? IconType.TREE : IconType.TRUNK)
-    await browser.action.setIcon({ path: iconPaths })
+    await (browser.action ?? browser.browserAction).setIcon({ path: iconPaths })
   }
 }
 
