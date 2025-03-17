@@ -7,9 +7,11 @@ import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import Icons from "@/entrypoints/popup/Icons"
 import { generateBranchName } from "@/lib/branch-name-generator"
+import { getSettingsStorageService } from "@/lib/settings-storage-service"
 import { getTicketProvidersService } from "@/lib/ticket-providers-service"
 
 const ticketProvidersService = getTicketProvidersService()
+const settingsStorageService = getSettingsStorageService()
 
 const Popup = () => {
   const [copied, setCopied] = React.useState(false)
@@ -23,11 +25,15 @@ const Popup = () => {
         const url = tab.url ?? tab.pendingUrl
         const isSupported = await ticketProvidersService.isSupported(url ?? "")
         if (isSupported) {
+          const settings = await settingsStorageService.get()
           const ticketInfo = await ticketProvidersService.parseUrl(url ?? "")
+          const template = settings.templates.find(
+            (t) => t.id === settings.defaultTemplateId
+          )
           const name = generateBranchName(
-            "{username}/{id}-{title}",
+            template!.template,
             ticketInfo,
-            "farmisen"
+            settings.username
           )
           setBranchName(name)
         }
@@ -50,7 +56,7 @@ const Popup = () => {
   const copyToClipboard = async () => {
     await navigator.clipboard.writeText(branchName)
     setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
+    setTimeout(() => window.close(), 2000)
   }
 
   return (

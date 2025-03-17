@@ -25,7 +25,7 @@ import { type FormData } from "./OptionsPage"
 type BranchTemplatesSettingsProps = {
   control: Control<FormData>
   watchTemplates: Template[]
-  watchDefaultTemplate: string
+  watchDefaultTemplateId: string
   newTemplate: { name: string; template: string }
   setNewTemplate: Dispatch<SetStateAction<{ name: string; template: string }>>
   getValues: UseFormGetValues<FormData>
@@ -34,7 +34,7 @@ type BranchTemplatesSettingsProps = {
 
 const BranchTemplatesSettings: FC<BranchTemplatesSettingsProps> = ({
   watchTemplates,
-  watchDefaultTemplate,
+  watchDefaultTemplateId,
   newTemplate,
   setNewTemplate,
   getValues,
@@ -61,8 +61,8 @@ const BranchTemplatesSettings: FC<BranchTemplatesSettingsProps> = ({
     setValue("templates", filteredTemplates as NonEmptyTemplateArray)
 
     // If the default template is removed, set a new default
-    if (getValues("defaultTemplate") === id && templates.length > 1) {
-      setValue("defaultTemplate", filteredTemplates[0].id)
+    if (getValues("defaultTemplateId") === id && templates.length > 1) {
+      setValue("defaultTemplateId", filteredTemplates[0].id)
     }
   }
 
@@ -92,12 +92,12 @@ const BranchTemplatesSettings: FC<BranchTemplatesSettingsProps> = ({
                   <Button
                     type="button"
                     variant={
-                      watchDefaultTemplate === template.id ? "secondary" : "outline"
+                      watchDefaultTemplateId === template.id ? "secondary" : "outline"
                     }
                     size="sm"
                     className="h-8"
-                    onClick={() => setValue("defaultTemplate", template.id)}>
-                    {watchDefaultTemplate === template.id && (
+                    onClick={() => setValue("defaultTemplateId", template.id)}>
+                    {watchDefaultTemplateId === template.id && (
                       <Check className="h-4 w-4 mr-1" />
                     )}
                     Default
