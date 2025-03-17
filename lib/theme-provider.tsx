@@ -1,6 +1,6 @@
 import * as React from "react"
 
-export function ThemeProvider({ children }: { children: React.ReactNode }) {
+export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   React.useEffect(() => {
     // Media query to detect dark mode
     const darkModeMediaQuery = window.matchMedia("(prefers-color-scheme: dark)")
