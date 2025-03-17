@@ -88,7 +88,7 @@ export const formSchema = z.object({
         ]
       }
     ),
-  defaultTemplate: z.string(),
+  defaultTemplateId: z.string(),
   categories: z
     .array(
       z.object({
@@ -115,7 +115,7 @@ export const formSchema = z.object({
         return val as [{ id: string; name: string }, ...{ id: string; name: string }[]]
       }
     ),
-  defaultCategory: z.string(),
+  defaultCategoryId: z.string(),
   enforceLowercase: z.boolean(),
   replacementCharacter: z
     .string()
@@ -166,18 +166,20 @@ const OptionsPage = () => {
   }, [])
 
   const watchTemplates = form.watch("templates")
-  const watchDefaultTemplate = form.watch("defaultTemplate")
+  const watchDefaultTemplateId = form.watch("defaultTemplateId")
   const watchCategories = form.watch("categories")
-  const watchDefaultCategory = form.watch("defaultCategory")
+  const watchDefaultCategoryId = form.watch("defaultCategoryId")
   const watchEnforceLowercase = form.watch("enforceLowercase")
   const watchReplacementCharacter = form.watch("replacementCharacter")
   const watchUsername = form.watch("username")
 
   const generatePreview = () => {
-    const selectedTemplate = watchTemplates.find((t) => t.id === watchDefaultTemplate)
+    const selectedTemplate = watchTemplates.find((t) => t.id === watchDefaultTemplateId)
     if (!selectedTemplate) return ""
 
-    const selectedCategory = watchCategories.find((c) => c.id === watchDefaultCategory)
+    const selectedCategory = watchCategories.find(
+      (c) => c.id === watchDefaultCategoryId
+    )
     const categoryName = selectedCategory ? selectedCategory.name : previewData.category
 
     try {
@@ -306,7 +308,7 @@ const OptionsPage = () => {
               <BranchTemplateSettings
                 control={form.control}
                 watchTemplates={watchTemplates}
-                watchDefaultTemplate={watchDefaultTemplate}
+                watchDefaultTemplateId={watchDefaultTemplateId}
                 newTemplate={newTemplate}
                 setNewTemplate={setNewTemplate}
                 getValues={form.getValues}
@@ -318,7 +320,7 @@ const OptionsPage = () => {
             <TabsContent value="categories">
               <CategoriesOptions
                 watchCategories={watchCategories}
-                watchDefaultCategory={watchDefaultCategory}
+                watchDefaultCategoryId={watchDefaultCategoryId}
                 newCategory={newCategory}
                 setNewCategory={setNewCategory}
                 getValues={form.getValues}

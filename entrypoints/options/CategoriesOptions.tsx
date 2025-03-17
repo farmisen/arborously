@@ -13,7 +13,7 @@ import { type FormData } from "./OptionsPage"
 
 type CategoriesSettingsProps = {
   watchCategories: Category[]
-  watchDefaultCategory: string
+  watchDefaultCategoryId: string
   newCategory: string
   setNewCategory: Dispatch<SetStateAction<string>>
   getValues: UseFormGetValues<FormData>
@@ -22,7 +22,7 @@ type CategoriesSettingsProps = {
 
 const CategoriesSettings: FC<CategoriesSettingsProps> = ({
   watchCategories,
-  watchDefaultCategory,
+  watchDefaultCategoryId,
   newCategory,
   setNewCategory,
   getValues,
@@ -46,8 +46,8 @@ const CategoriesSettings: FC<CategoriesSettingsProps> = ({
     setValue("categories", filteredCategories as NonEmptyCategoryArray)
 
     // If the default category is removed, set a new default
-    if (getValues("defaultCategory") === id && categories.length > 1) {
-      setValue("defaultCategory", filteredCategories[0].id)
+    if (getValues("defaultCategoryId") === id && categories.length > 1) {
+      setValue("defaultCategoryId", filteredCategories[0].id)
     }
   }
 
@@ -71,12 +71,12 @@ const CategoriesSettings: FC<CategoriesSettingsProps> = ({
                 <Button
                   type="button"
                   variant={
-                    watchDefaultCategory === category.id ? "secondary" : "outline"
+                    watchDefaultCategoryId === category.id ? "secondary" : "outline"
                   }
                   size="sm"
                   className="h-7 px-2"
-                  onClick={() => setValue("defaultCategory", category.id)}>
-                  {watchDefaultCategory === category.id && (
+                  onClick={() => setValue("defaultCategoryId", category.id)}>
+                  {watchDefaultCategoryId === category.id && (
                     <Check className="h-3 w-3 mr-1" />
                   )}
                   Default

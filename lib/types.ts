@@ -38,9 +38,9 @@ export type NonEmptyTemplateArray = [Template, ...Template[]]
 export type Settings = {
   username: string
   templates: NonEmptyTemplateArray
-  defaultTemplate: string
+  defaultTemplateId: string
   categories: NonEmptyCategoryArray
-  defaultCategory: string
+  defaultCategoryId: string
   enforceLowercase: boolean
   replacementCharacter: string
 }

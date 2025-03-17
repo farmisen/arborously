@@ -11,7 +11,7 @@ export const DEFAULT_SETTINGS: Settings = {
       template: "{username}/{category}/{id}-{title}"
     }
   ],
-  defaultTemplate: "1",
+  defaultTemplateId: "1",
   categories: [
     { id: "1", name: "feat" },
     { id: "2", name: "bug" },
@@ -20,7 +20,7 @@ export const DEFAULT_SETTINGS: Settings = {
     { id: "5", name: "refactor" },
     { id: "6", name: "test" }
   ],
-  defaultCategory: "1",
+  defaultCategoryId: "1",
   enforceLowercase: true,
   replacementCharacter: "-"
 }
