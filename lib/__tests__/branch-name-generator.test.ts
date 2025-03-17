@@ -5,6 +5,24 @@ import { type GeneratorOptions, type TicketInfo } from "../types"
 
 describe("generator", () => {
   describe("generate", () => {
+    it("should use default category when ticket has no category", () => {
+      const ticketInfo: TicketInfo = {
+        id: "123",
+        title: "Test Ticket"
+      }
+      const username = "testuser"
+      const urlTemplate = "{username}/{category}/{id}-{title}"
+      const defaultCategory = "test"
+
+      const result = generateBranchName(
+        urlTemplate,
+        ticketInfo,
+        username,
+        defaultCategory
+      )
+
+      expect(result).toBe("testuser/test/123-test_ticket")
+    })
     it("should replace template variables with corresponding values", () => {
       const ticketInfo: TicketInfo = {
         id: "123",
@@ -13,8 +31,14 @@ describe("generator", () => {
       }
       const username = "testuser"
       const urlTemplate = "{username}/{category}/{id}-{title}"
+      const defaultCategory = "test"
 
-      const result = generateBranchName(urlTemplate, ticketInfo, username)
+      const result = generateBranchName(
+        urlTemplate,
+        ticketInfo,
+        username,
+        defaultCategory
+      )
 
       expect(result).toBe("testuser/feature/123-test_ticket")
     })
@@ -26,8 +50,14 @@ describe("generator", () => {
       }
       const username = "testuser"
       const urlTemplate = "{username}/{id}-{title}"
+      const defaultCategory = "feature"
 
-      const result = generateBranchName(urlTemplate, ticketInfo, username)
+      const result = generateBranchName(
+        urlTemplate,
+        ticketInfo,
+        username,
+        defaultCategory
+      )
 
       expect(result).toBe("testuser/123-")
     })
@@ -38,10 +68,11 @@ describe("generator", () => {
       }
       const username = "testuser"
       const urlTemplate = "{username}/{id}-{title}"
+      const defaultCategory = "feature"
 
-      expect(() => generateBranchName(urlTemplate, ticketInfo, username)).toThrow(
-        "Missing template fields: id"
-      )
+      expect(() =>
+        generateBranchName(urlTemplate, ticketInfo, username, defaultCategory)
+      ).toThrow("Missing template fields: id")
     })
 
     it("should strip out special characters", () => {
@@ -52,8 +83,14 @@ describe("generator", () => {
       }
       const username = "test.user"
       const urlTemplate = "{username}/{category}/{id}-{title}"
+      const defaultCategory = "test"
 
-      const result = generateBranchName(urlTemplate, ticketInfo, username)
+      const result = generateBranchName(
+        urlTemplate,
+        ticketInfo,
+        username,
+        defaultCategory
+      )
 
       expect(result).toBe("test.user/test/123-special_characters_spaces")
     })
@@ -62,8 +99,14 @@ describe("generator", () => {
       const ticketInfo: TicketInfo = {}
       const username = "testuser"
       const urlTemplate = "{username}/static-path"
+      const defaultCategory = "test"
 
-      const result = generateBranchName(urlTemplate, ticketInfo, username)
+      const result = generateBranchName(
+        urlTemplate,
+        ticketInfo,
+        username,
+        defaultCategory
+      )
 
       expect(result).toBe("testuser/static-path")
     })
@@ -76,8 +119,14 @@ describe("generator", () => {
       }
       const username = "testuser"
       const urlTemplate = "{category}/{id}-{title}"
+      const defaultCategory = "test"
 
-      const result = generateBranchName(urlTemplate, ticketInfo, username)
+      const result = generateBranchName(
+        urlTemplate,
+        ticketInfo,
+        username,
+        defaultCategory
+      )
 
       expect(result).toBe("feature/123-test_ticket_with_spaces")
     })
@@ -90,12 +139,19 @@ describe("generator", () => {
       }
       const username = "testuser"
       const urlTemplate = "{username}/{category}/{id}-{title}"
+      const defaultCategory = "test"
       const options: GeneratorOptions = {
         lower: true,
         replacement: "-"
       }
 
-      const result = generateBranchName(urlTemplate, ticketInfo, username, options)
+      const result = generateBranchName(
+        urlTemplate,
+        ticketInfo,
+        username,
+        defaultCategory,
+        options
+      )
 
       expect(result).toBe("testuser/feature/123-test-ticket-with-spaces")
     })
@@ -108,12 +164,19 @@ describe("generator", () => {
       }
       const username = "testuser"
       const urlTemplate = "{username}/{category}/{id}-{title}"
+      const defaultCategory = "test"
       const options: GeneratorOptions = {
         lower: false,
         replacement: "_"
       }
 
-      const result = generateBranchName(urlTemplate, ticketInfo, username, options)
+      const result = generateBranchName(
+        urlTemplate,
+        ticketInfo,
+        username,
+        defaultCategory,
+        options
+      )
 
       expect(result).toBe("testuser/Feature/123-Test_Ticket")
     })
@@ -126,8 +189,14 @@ describe("generator", () => {
       }
       const username = "testuser"
       const urlTemplate = "{username}/{category}/{id}-{title}"
+      const defaultCategory = "test"
 
-      const result = generateBranchName(urlTemplate, ticketInfo, username)
+      const result = generateBranchName(
+        urlTemplate,
+        ticketInfo,
+        username,
+        defaultCategory
+      )
 
       expect(result).toBe("testuser/feature/123-test_ticket")
     })

@@ -193,6 +193,7 @@ const OptionsPage = () => {
         watchUsername && watchUsername.length > 0
           ? watchUsername
           : previewData.username,
+        categoryName,
         {
           lower: watchEnforceLowercase,
           replacement: watchReplacementCharacter
