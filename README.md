@@ -14,14 +14,14 @@ A browser extension that automatically generates standardized git branch names f
 
 ### Chrome/Edge
 
-1. Build the extension for Firefox: `pnpm build`
+1. Build the extension for Chrome: `pnpm build`
 2. Open Chrome/Edge and navigate to `chrome://extensions` or `edge://extensions`
 3. Enable "Developer mode"
 4. Click "Load unpacked" and select `.output/chrome-mv3` folder
 
 ### Firefox
 
-1. Build the extension for Firefox: `pnpm zip:firefox`
+1. Bundle the extension for Firefox: `pnpm zip:firefox`
 2. Open Firefox and navigate to `about:debugging`
 3. Click "This Firefox" in the left sidebar
 4. Click "Load Temporary Add-on..." and select `.output/arborously-x-y-z-firefox.zip
@@ -31,7 +31,7 @@ A browser extension that automatically generates standardized git branch names f
 
 1. In the Firefox Nightly go to `about:config`
 2. Set `xpinstall.signatures.required` to false
-3. Build the extension for Firefox: `pnpm zip:firefox`
+3. Bundle the extension for Firefox: `pnpm zip:firefox`
 4. Go to `about:addons`
 5. Click the cogwheel icon
 6. Select "Install Add-on From File..." and select `.output/arborously-x-y-z-firefox.zip
