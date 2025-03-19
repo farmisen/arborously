@@ -34,7 +34,10 @@ const CategoriesSettings: FC<CategoriesSettingsProps> = ({
       const newId = (
         Math.max(...categories.map((c) => Number.parseInt(c.id)), 0) + 1
       ).toString()
-      setValue("categories", [...categories, { id: newId, name: newCategory }])
+      setValue("categories", [...categories, { id: newId, name: newCategory }], {
+        shouldDirty: true,
+        shouldTouch: true
+      })
       setNewCategory("")
     }
   }
@@ -43,11 +46,17 @@ const CategoriesSettings: FC<CategoriesSettingsProps> = ({
     const categories = getValues("categories")
     const filteredCategories = categories.filter((c) => c.id !== id)
     // Casting is safe because the UI disables removal when categories.length <= 1
-    setValue("categories", filteredCategories as NonEmptyCategoryArray)
+    setValue("categories", filteredCategories as NonEmptyCategoryArray, {
+      shouldDirty: true,
+      shouldTouch: true
+    })
 
     // If the default category is removed, set a new default
     if (getValues("defaultCategoryId") === id && categories.length > 1) {
-      setValue("defaultCategoryId", filteredCategories[0].id)
+      setValue("defaultCategoryId", filteredCategories[0].id, {
+        shouldDirty: true,
+        shouldTouch: true
+      })
     }
   }
 
@@ -75,7 +84,12 @@ const CategoriesSettings: FC<CategoriesSettingsProps> = ({
                   }
                   size="sm"
                   className="h-7 px-2"
-                  onClick={() => setValue("defaultCategoryId", category.id)}>
+                  onClick={() =>
+                    setValue("defaultCategoryId", category.id, {
+                      shouldDirty: true,
+                      shouldTouch: true
+                    })
+                  }>
                   {watchDefaultCategoryId === category.id && (
                     <Check className="h-3 w-3 mr-1" />
                   )}

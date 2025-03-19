@@ -46,10 +46,17 @@ const BranchTemplatesSettings: FC<BranchTemplatesSettingsProps> = ({
       const newId = (
         Math.max(...templates.map((t) => Number.parseInt(t.id)), 0) + 1
       ).toString()
-      setValue("templates", [
-        ...templates,
-        { id: newId, name: newTemplate.name, template: newTemplate.template }
-      ])
+
+      // Use setValue with shouldDirty and shouldTouch to trigger form validation and auto-save
+      setValue(
+        "templates",
+        [
+          ...templates,
+          { id: newId, name: newTemplate.name, template: newTemplate.template }
+        ],
+        { shouldDirty: true, shouldTouch: true }
+      )
+
       setNewTemplate({ name: "", template: "" })
     }
   }
@@ -58,11 +65,17 @@ const BranchTemplatesSettings: FC<BranchTemplatesSettingsProps> = ({
     const templates = getValues("templates")
     const filteredTemplates = templates.filter((t) => t.id !== id)
     // Casting is safe because we disable the remove button when only one template remains
-    setValue("templates", filteredTemplates as NonEmptyTemplateArray)
+    setValue("templates", filteredTemplates as NonEmptyTemplateArray, {
+      shouldDirty: true,
+      shouldTouch: true
+    })
 
     // If the default template is removed, set a new default
     if (getValues("defaultTemplateId") === id && templates.length > 1) {
-      setValue("defaultTemplateId", filteredTemplates[0].id)
+      setValue("defaultTemplateId", filteredTemplates[0].id, {
+        shouldDirty: true,
+        shouldTouch: true
+      })
     }
   }
 
@@ -96,7 +109,12 @@ const BranchTemplatesSettings: FC<BranchTemplatesSettingsProps> = ({
                     }
                     size="sm"
                     className="h-8"
-                    onClick={() => setValue("defaultTemplateId", template.id)}>
+                    onClick={() =>
+                      setValue("defaultTemplateId", template.id, {
+                        shouldDirty: true,
+                        shouldTouch: true
+                      })
+                    }>
                     {watchDefaultTemplateId === template.id && (
                       <Check className="h-4 w-4 mr-1" />
                     )}
