@@ -46,8 +46,8 @@ const Icons = () => {
               variant="ghost"
               size="icon"
               className="h-8 w-8"
-              onClick={() => {
-                void browser.runtime.openOptionsPage()
+              onClick={async () => {
+                await browser.runtime.openOptionsPage()
                 window.close()
               }}>
               <Settings className="h-4 w-4" />
