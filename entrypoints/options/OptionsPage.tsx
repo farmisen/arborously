@@ -1,8 +1,9 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Layers, RotateCcw, Save, Settings as SettingsIcon, Tag } from "lucide-react"
-import { useEffect, useState } from "react"
+import { Layers, RotateCcw, Settings as SettingsIcon, Tag } from "lucide-react"
+import { useCallback, useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
+import { useDebouncedCallback } from "use-debounce"
 import { z } from "zod"
 
 import { Button } from "@/components/ui/button"
@@ -130,10 +131,29 @@ export const formSchema = z.object({
 
 export type FormData = z.infer<typeof formSchema>
 
+// Define tabs as constants for type safety
+const TABS = {
+  GLOBAL: "global-settings",
+  TEMPLATES: "templates",
+  CATEGORIES: "categories"
+} as const
+
+type TabValue = (typeof TABS)[keyof typeof TABS]
+
+// Helper to get the initial tab from URL hash or default to global settings
+const getInitialTab = (): TabValue => {
+  if (typeof window === "undefined") return TABS.GLOBAL
+
+  const hash = window.location.hash.replace("#", "")
+  return Object.values(TABS).includes(hash as TabValue)
+    ? (hash as TabValue)
+    : TABS.GLOBAL
+}
+
 const OptionsPage = () => {
+  const [activeTab, setActiveTab] = useState<TabValue>(getInitialTab)
   const [newTemplate, setNewTemplate] = useState({ name: "", template: "" })
   const [newCategory, setNewCategory] = useState("")
-  const [isSaving, setIsSaving] = useState(false)
   const [previewData, setPreviewData] = useState({
     id: "TASK-123",
     title: "Add new feature",
@@ -164,6 +184,42 @@ const OptionsPage = () => {
 
     void loadSettings()
   }, [])
+
+  const showSuccessToast = useDebouncedCallback(
+    () => {
+      toast.success("Settings saved", {
+        duration: 2000
+      })
+    },
+    1000,
+    { maxWait: 5000 } // Maximum time to wait before showing a toast
+  )
+
+  // Auto-save function
+  const saveSettings = async (data: FormData) => {
+    try {
+      await settingsStorageService.set(data as Settings)
+      // Show debounced toast notification
+      showSuccessToast()
+    } catch (error) {
+      console.error("Failed to save settings:", error)
+      toast.error("Failed to save settings", {
+        duration: 3000
+      })
+    }
+  }
+
+  // Auto-save whenever form values change and the form is valid
+  useEffect(() => {
+    const subscription = form.watch((value) => {
+      // Only save if we have a complete form and it's valid
+      if (form.formState.isValid && Object.keys(value).length > 0) {
+        void saveSettings(value as FormData)
+      }
+    })
+
+    return () => subscription.unsubscribe()
+  }, [form.formState.isValid, saveSettings])
 
   const watchTemplates = form.watch("templates")
   const watchDefaultTemplateId = form.watch("defaultTemplateId")
@@ -207,69 +263,54 @@ const OptionsPage = () => {
 
   const resetToDefaults = () => {
     void settingsStorageService.reset()
-    form.reset(DEFAULT_SETTINGS)
+    form.reset(DEFAULT_SETTINGS, {
+      keepDirty: false,
+      keepTouched: false,
+      keepIsValid: false,
+      keepErrors: false,
+      keepValues: false,
+      keepDefaultValues: false
+    })
     toast.info("All settings have been reset to default values.", {
       duration: 3000
     })
   }
 
-  const onSubmit = async (data: FormData) => {
-    setIsSaving(true)
-    try {
-      await settingsStorageService.set(data as Settings)
-      toast.success("Your settings have been successfully saved.", {
-        duration: 3000
-      })
-    } catch (error) {
-      console.error("Failed to save settings:", error)
-      toast.error("Failed to save settings. Please try again.", {
-        duration: 5000
-      })
-    } finally {
-      setIsSaving(false)
+  // Handle tab changes and update URL hash
+  const handleTabChange = useCallback((value: TabValue) => {
+    setActiveTab(value)
+    window.location.hash = value
+  }, [])
+
+  // Listen for hash changes in the URL
+  useEffect(() => {
+    const handleHashChange = () => {
+      const newTab = getInitialTab()
+      setActiveTab(newTab)
     }
-  }
+
+    window.addEventListener("hashchange", handleHashChange)
+
+    return () => {
+      window.removeEventListener("hashchange", handleHashChange)
+    }
+  }, [])
 
   return (
     <div className="container mx-auto py-6 max-w-4xl">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form className="space-y-8">
           <div className="flex items-center justify-between mb-6">
             <div>
               <h1 className="text-3xl font-bold">Arborously Options</h1>
               <p className="text-muted-foreground">
                 Configure your branch naming preferences
               </p>
-            </div>
-            <div className="flex space-x-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => {
-                  const loadSavedSettings = async () => {
-                    try {
-                      const settings = await settingsStorageService.get()
-                      form.reset(settings)
-                      toast.info("Changes discarded. Form reset to saved settings.", {
-                        duration: 3000
-                      })
-                    } catch (error) {
-                      console.error("Failed to load settings:", error)
-                      toast.error("Failed to load settings. Please try again.", {
-                        duration: 5000
-                      })
-                    }
-                  }
-                  void loadSavedSettings()
-                }}>
-                Cancel
-              </Button>
-              <Button type="submit" disabled={!form.formState.isValid || isSaving}>
-                <Save className="h-4 w-4 mr-2" /> Save Settings
-              </Button>
+              <p className="text-xs text-muted-foreground mt-1">
+                Settings are saved automatically
+              </p>
             </div>
           </div>
-
           {/* Branch Name Preview */}
           <Card className="mb-6">
             <CardContent>
@@ -281,31 +322,33 @@ const OptionsPage = () => {
               </div>
             </CardContent>
           </Card>
-
-          {/* Settings */}
-          <Tabs defaultValue="global-settings" className="space-y-6">
+          {/* Settings */}+
+          <Tabs
+            value={activeTab}
+            onValueChange={(value: string) => handleTabChange(value as TabValue)}
+            className="space-y-6">
             <TabsList className="w-full justify-start">
-              <TabsTrigger value="global-settings" className="flex items-center">
+              <TabsTrigger value={TABS.GLOBAL} className="flex items-center">
                 <SettingsIcon className="h-4 w-4 mr-2" />
                 Global Settings
               </TabsTrigger>
-              <TabsTrigger value="templates" className="flex items-center">
+              <TabsTrigger value={TABS.TEMPLATES} className="flex items-center">
                 <Layers className="h-4 w-4 mr-2" />
                 Branch Templates
               </TabsTrigger>
-              <TabsTrigger value="categories" className="flex items-center">
+              <TabsTrigger value={TABS.CATEGORIES} className="flex items-center">
                 <Tag className="h-4 w-4 mr-2" />
                 Categories
               </TabsTrigger>
             </TabsList>
 
             {/* Global Settings Section */}
-            <TabsContent value="global-settings">
+            <TabsContent value={TABS.GLOBAL}>
               <GlobalSettings control={form.control} />
             </TabsContent>
 
             {/* Branch Templates Section */}
-            <TabsContent value="templates">
+            <TabsContent value={TABS.TEMPLATES}>
               <BranchTemplateSettings
                 control={form.control}
                 watchTemplates={watchTemplates}
@@ -318,7 +361,7 @@ const OptionsPage = () => {
             </TabsContent>
 
             {/* Categories Section */}
-            <TabsContent value="categories">
+            <TabsContent value={TABS.CATEGORIES}>
               <CategoriesOptions
                 watchCategories={watchCategories}
                 watchDefaultCategoryId={watchDefaultCategoryId}
