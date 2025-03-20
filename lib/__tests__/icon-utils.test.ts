@@ -9,11 +9,11 @@ describe("icon-utils", () => {
       const result = getIconPaths(IconType.TRUNK)
 
       expect(result).toEqual({
-        "16": "icon/trunk-16.png",
-        "24": "icon/trunk-24.png",
-        "48": "icon/trunk-48.png",
-        "96": "icon/trunk-96.png",
-        "128": "icon/trunk-128.png"
+        "16": "icon/trunk-arborously-16.png",
+        "24": "icon/trunk-arborously-24.png",
+        "48": "icon/trunk-arborously-48.png",
+        "96": "icon/trunk-arborously-96.png",
+        "128": "icon/trunk-arborously-128.png"
       })
     })
 
@@ -21,11 +21,11 @@ describe("icon-utils", () => {
       const result = getIconPaths(IconType.TREE)
 
       expect(result).toEqual({
-        "16": "icon/tree-16.png",
-        "24": "icon/tree-24.png",
-        "48": "icon/tree-48.png",
-        "96": "icon/tree-96.png",
-        "128": "icon/tree-128.png"
+        "16": "icon/tree-arborously-16.png",
+        "24": "icon/tree-arborously-24.png",
+        "48": "icon/tree-arborously-48.png",
+        "96": "icon/tree-arborously-96.png",
+        "128": "icon/tree-arborously-128.png"
       })
     })
   })

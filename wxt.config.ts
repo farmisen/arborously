@@ -11,11 +11,11 @@ export default defineConfig({
     },
     permissions: ["tabs", "storage"],
     icons: {
-      16: "icon/trunk-16.png",
-      24: "icon/trunk-24.png",
-      48: "icon/trunk-48.png",
-      96: "icon/trunk-96.png",
-      128: "icon/trunk-128.png"
+      16: "icon/trunk-arborously-16.png",
+      24: "icon/trunk-arborously-24.png",
+      48: "icon/trunk-arborously-48.png",
+      96: "icon/trunk-arborously-96.png",
+      128: "icon/trunk-arborously-128.png"
     }
   },
   vite: () => ({
