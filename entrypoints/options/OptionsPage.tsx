@@ -311,7 +311,6 @@ const OptionsPage = () => {
               </p>
             </div>
           </div>
-
           {/* Branch Name Preview */}
           <Card className="mb-6">
             <CardContent>
@@ -323,9 +322,11 @@ const OptionsPage = () => {
               </div>
             </CardContent>
           </Card>
-
-          {/* Settings */}
-          <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
+          {/* Settings */}+
+          <Tabs
+            value={activeTab}
+            onValueChange={(value: string) => handleTabChange(value as TabValue)}
+            className="space-y-6">
             <TabsList className="w-full justify-start">
               <TabsTrigger value={TABS.GLOBAL} className="flex items-center">
                 <SettingsIcon className="h-4 w-4 mr-2" />
