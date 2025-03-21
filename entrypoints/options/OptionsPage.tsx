@@ -322,7 +322,7 @@ const OptionsPage = () => {
               </div>
             </CardContent>
           </Card>
-          {/* Settings */}+
+          {/* Settings */}
           <Tabs
             value={activeTab}
             onValueChange={(value: string) => handleTabChange(value as TabValue)}

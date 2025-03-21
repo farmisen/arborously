@@ -43,13 +43,13 @@ Arborously is built with [WXT](https://wxt.dev/), React, TypeScript, and Tailwin
 
 ### Prerequisites
 
-- Node.js 16+
+- Node.js 22
 - pnpm
 
 ### Setup
 
 ```bash
-# Clone the repository
+# Clone the repositor
 git clone https://github.com/yourusername/arborously.git
 cd arborously
 
