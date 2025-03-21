@@ -10,11 +10,20 @@ import {
 
 const Icons = () => {
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-0">
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button variant="ghost" size="icon" className="h-8 w-8">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8"
+              onClick={async () => {
+                await browser.tabs.create({
+                  url: "https://github.com/farmisen/arborously"
+                })
+                window.close()
+              }}>
               <Github className="h-4 w-4" />
               <span className="sr-only">GitHub Repository</span>
             </Button>
