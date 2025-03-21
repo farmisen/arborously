@@ -37,7 +37,16 @@ const Icons = () => {
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button variant="ghost" size="icon" className="h-8 w-8">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8"
+              onClick={async () => {
+                await browser.tabs.create({
+                  url: "https://github.com/farmisen/arborously/blob/main/README.md"
+                })
+                window.close()
+              }}>
               <HelpCircle className="h-4 w-4" />
               <span className="sr-only">Documentation</span>
             </Button>
