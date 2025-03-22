@@ -7,6 +7,7 @@ describe("generator", () => {
   describe("generate", () => {
     it("should use default category when ticket has no category", () => {
       const ticketInfo: TicketInfo = {
+        url: "https://example.com",
         id: "123",
         title: "Test Ticket"
       }
@@ -25,6 +26,7 @@ describe("generator", () => {
     })
     it("should replace template variables with corresponding values", () => {
       const ticketInfo: TicketInfo = {
+        url: "https://example.com",
         id: "123",
         title: "Test Ticket",
         category: "Feature"
@@ -45,6 +47,7 @@ describe("generator", () => {
 
     it("should handle empty values by replacing with empty strings", () => {
       const ticketInfo: TicketInfo = {
+        url: "https://example.com",
         id: "123",
         title: ""
       }
@@ -64,6 +67,7 @@ describe("generator", () => {
 
     it("should throw an error for missing template fields", () => {
       const ticketInfo: TicketInfo = {
+        url: "https://example.com",
         title: "Test Ticket"
       }
       const username = "testuser"
@@ -77,6 +81,7 @@ describe("generator", () => {
 
     it("should strip out special characters", () => {
       const ticketInfo: TicketInfo = {
+        url: "https://example.com",
         id: "123",
         title: "Special @ Characters & Spaces",
         category: "Test"
@@ -96,7 +101,7 @@ describe("generator", () => {
     })
 
     it("should work with just the username field", () => {
-      const ticketInfo: TicketInfo = {}
+      const ticketInfo: TicketInfo = { url: "https://example.com" }
       const username = "testuser"
       const urlTemplate = "{username}/static-path"
       const defaultCategory = "test"
@@ -113,6 +118,7 @@ describe("generator", () => {
 
     it("it should work without the username field", () => {
       const ticketInfo: TicketInfo = {
+        url: "https://example.com",
         id: "123",
         title: "Test Ticket With Spaces",
         category: "Feature"
@@ -133,6 +139,7 @@ describe("generator", () => {
 
     it("should respect custom replacement character option", () => {
       const ticketInfo: TicketInfo = {
+        url: "https://example.com",
         id: "123",
         title: "Test Ticket With Spaces",
         category: "Feature"
@@ -158,6 +165,7 @@ describe("generator", () => {
 
     it("should respect uppercase option", () => {
       const ticketInfo: TicketInfo = {
+        url: "https://example.com",
         id: "123",
         title: "Test Ticket",
         category: "Feature"
@@ -183,6 +191,7 @@ describe("generator", () => {
 
     it("should use default options when none are provided", () => {
       const ticketInfo: TicketInfo = {
+        url: "https://example.com",
         id: "123",
         title: "Test Ticket",
         category: "Feature"
