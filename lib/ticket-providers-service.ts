@@ -5,15 +5,21 @@ import { type TicketInfo } from "@/lib/types"
 
 // Base provider interface that platform-specific parsers must implement
 export interface TicketProvider {
-  name: string
-  isSupported(url: string): boolean
-  parseUrl(url: string): TicketInfo
+  isTicketUrl(url: string): boolean
+  titleSelector?: string
+  extractTicketInfo(url: string, titleText?: string): TicketInfo
+}
+
+// Interface for the static methods on provider classes
+export interface TicketProviderStatic {
+  getMatchPatterns(): string[]
 }
 
 export type TicketProvidersService = {
   registerProvider(provider: TicketProvider): void
-  isSupported(url: string): boolean
-  parseUrl(url: string): TicketInfo
+  isTicketUrl(url: string): boolean
+  extractTicketInfo(url: string, titleText?: string): TicketInfo
+  getTitleSelector(url: string): string | undefined
   getProviders(): TicketProvider[]
 }
 
@@ -29,18 +35,23 @@ const createTicketProvidersService = (): TicketProvidersService => {
       return [...providers]
     },
 
-    isSupported(url: string) {
-      return providers.some((provider) => provider.isSupported(url))
+    isTicketUrl(url: string) {
+      return providers.some((provider) => provider.isTicketUrl(url))
     },
 
-    parseUrl(url: string): TicketInfo {
-      const provider = providers.find((provider) => provider.isSupported(url))
+    getTitleSelector(url: string): string | undefined {
+      const provider = providers.find((provider) => provider.isTicketUrl(url))
+      return provider?.titleSelector
+    },
+
+    extractTicketInfo(url: string, titleText?: string): TicketInfo {
+      const provider = providers.find((provider) => provider.isTicketUrl(url))
 
       if (!provider) {
         throw new Error(`No provider found for URL: ${url}`)
       }
 
-      return provider.parseUrl(url)
+      return provider.extractTicketInfo(url, titleText)
     }
   }
 

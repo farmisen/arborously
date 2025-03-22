@@ -1,22 +1,73 @@
+// No longer need MATCHES import since we rely on ticketProvidersService
+import { registerCurrentTicketInfoService } from "@/lib/current-ticket-info-service"
 import { getIconPaths } from "@/lib/icon-utils"
+import { onMessage } from "@/lib/messaging"
 import { registerSettingsStorageService } from "@/lib/settings-storage-service"
 import { registerTicketProvidersService } from "@/lib/ticket-providers-service"
-import { IconType } from "@/lib/types"
+import { IconType, type TicketInfo } from "@/lib/types"
+
+/**
+ * Background script
+ *
+ * Initializes services, monitors tab changes, and handles ticket notifications.
+ * When a supported ticket URL is detected, it executes content scripts to extract
+ * ticket information and updates the extension icon accordingly.
+ *
+ * Listens for tab events (updated, activated) and ticket info notifications
+ * to maintain the extension state across browser navigation.
+ */
 
 // Register services
 const ticketProvidersService = registerTicketProvidersService()
 registerSettingsStorageService()
+registerCurrentTicketInfoService()
 
-// Helper function to handle tab changes and avoid async in event listeners
 const handleTabChange = async (tabId: number) => {
   const tab = await browser.tabs.get(tabId)
   if (tab.active) {
     const url = tab.url ?? tab.pendingUrl
-    const isSupported = ticketProvidersService.isSupported(url ?? "")
-    const iconPaths = getIconPaths(isSupported ? IconType.TREE : IconType.TRUNK)
+    const isValidURL = url && (url.startsWith("http://") || url.startsWith("https://"))
+    const isTicketUrl = url && isValidURL && ticketProvidersService.isTicketUrl(url)
+
+    if (isTicketUrl) {
+      // Execute the ticket info extraction script in the context of the active tab DOM
+      await browser.scripting.executeScript({
+        target: { tabId: tabId },
+        files: ["/content-scripts/content.js"]
+      })
+    } else {
+      // Reset the icon if not a valid ticket URL
+      const iconPaths = getIconPaths(IconType.TRUNK)
+      await (browser.action ?? browser.browserAction).setIcon({ path: iconPaths })
+    }
+  }
+}
+
+const handleNotification = async (ticketInfo: TicketInfo) => {
+  // fetch the active tab
+  const tabs = await browser.tabs.query({ active: true, currentWindow: true })
+  if (tabs.length > 0) {
+    const tab = tabs[0]
+    const url = tab.url ?? tab.pendingUrl
+
+    // verify that the notification is for the active tab
+    if (url !== ticketInfo.url) {
+      console.warn(
+        `${url} received notification for a different tab: ${ticketInfo.url}`
+      )
+      return
+    }
+
+    // fetch the icon paths and update the icon
+    const iconPaths = getIconPaths(IconType.TREE)
     await (browser.action ?? browser.browserAction).setIcon({ path: iconPaths })
   }
 }
+
+// Listen for ticket info notifications
+onMessage("ticketInfoNotification", ({ data: ticketInfo }) => {
+  void (async () => await handleNotification(ticketInfo))()
+})
 
 export default defineBackground(() => {
   browser.tabs.onUpdated.addListener((id) => {

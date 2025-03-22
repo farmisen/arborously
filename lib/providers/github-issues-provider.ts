@@ -1,23 +1,21 @@
 import { type TicketProvider } from "@/lib/ticket-providers-service"
 import { type TicketInfo } from "@/lib/types"
 
-// This provider does not extract the title from the URL
-// and should be updated to parse the title from the page
-
 export class GithubIssuesProvider implements TicketProvider {
-  name = "github-issues"
+  titleSelector = ".markdown-title"
 
-  // Matches GitHub Issues URLs
-  // Examples:
-  // - https://github.com/owner/repo/issues/123
   private readonly GITHUB_ISSUES_REGEX =
     /^https?:\/\/(?:www\.)?github\.com\/([^\/]+)\/([^\/]+)\/(issues)\/(\d+)/
 
-  isSupported(url: string): boolean {
+  static getMatchPatterns(): string[] {
+    return ["https://github.com/*/*/issues/*", "https://www.github.com/*/*/issues/*"]
+  }
+
+  isTicketUrl(url: string): boolean {
     return this.GITHUB_ISSUES_REGEX.test(url)
   }
 
-  parseUrl(url: string): TicketInfo {
+  extractTicketInfo(url: string, titleText?: string): TicketInfo {
     const match = url.match(this.GITHUB_ISSUES_REGEX)
 
     if (!match) {
@@ -29,7 +27,8 @@ export class GithubIssuesProvider implements TicketProvider {
     const type = match[3]
     const issueId = match[4]
 
-    return {
+    const baseInfo: TicketInfo = {
+      url,
       id: issueId,
       metadata: {
         owner,
@@ -37,5 +36,14 @@ export class GithubIssuesProvider implements TicketProvider {
         type
       }
     }
+
+    if (titleText) {
+      return {
+        ...baseInfo,
+        title: titleText
+      }
+    }
+
+    return baseInfo
   }
 }
