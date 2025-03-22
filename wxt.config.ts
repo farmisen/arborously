@@ -1,6 +1,9 @@
 import tailwindcss from "@tailwindcss/vite"
 import { defineConfig } from "wxt"
 
+import { GithubIssuesProvider } from "./lib/providers/github-issues-provider"
+import { TrelloProvider } from "./lib/providers/trello-provider"
+
 // See https://wxt.dev/api/config.html
 export default defineConfig({
   manifest: {
@@ -16,7 +19,12 @@ export default defineConfig({
       48: "icon/trunk-arborously-48.png",
       96: "icon/trunk-arborously-96.png",
       128: "icon/trunk-arborously-128.png"
-    }
+    },
+    host_permissions: [
+      "http://localhost/*",
+      ...GithubIssuesProvider.getMatchPatterns(),
+      ...TrelloProvider.getMatchPatterns()
+    ]
   },
   vite: () => ({
     plugins: [tailwindcss()],

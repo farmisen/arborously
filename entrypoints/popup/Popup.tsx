@@ -7,8 +7,8 @@ import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import Icons from "@/entrypoints/popup/Icons"
 import { generateBranchName } from "@/lib/branch-name-generator"
+import { getCurrentTicketInfoService } from "@/lib/current-ticket-info-service"
 import { getSettingsStorageService } from "@/lib/settings-storage-service"
-import { getTicketProvidersService } from "@/lib/ticket-providers-service"
 import {
   type Category,
   type Settings,
@@ -16,8 +16,8 @@ import {
   type TicketInfo
 } from "@/lib/types"
 
-const ticketProvidersService = getTicketProvidersService()
 const settingsStorageService = getSettingsStorageService()
+const currentTicketInfoService = getCurrentTicketInfoService()
 
 const Popup = () => {
   const [copied, setCopied] = React.useState(false)
@@ -36,39 +36,40 @@ const Popup = () => {
       if (tabs.length > 0) {
         const tab = tabs[0]
         const url = tab.url ?? tab.pendingUrl
-        const isSupported = await ticketProvidersService.isSupported(url ?? "")
-        if (isSupported) {
-          const settingsData = await settingsStorageService.get()
-          setSettings(settingsData)
+        if (!url) {
+          return
+        }
 
-          setCategories(settingsData.categories)
+        const settingsData = await settingsStorageService.get()
+        setSettings(settingsData)
+        setCategories(settingsData.categories)
 
-          // Find index of default category
-          const defaultCategoryIndex = settingsData.categories.findIndex(
-            (c) => c.id === settingsData.defaultCategoryId
-          )
+        const defaultCategoryIndex = settingsData.categories.findIndex(
+          (c) => c.id === settingsData.defaultCategoryId
+        )
 
-          if (defaultCategoryIndex === -1) {
-            console.error(`Category #${settingsData.defaultCategoryId} not found`)
-            throw new Error(`Category #${settingsData.defaultCategoryId} not found`)
-          }
+        if (defaultCategoryIndex === -1) {
+          console.error(`Category #${settingsData.defaultCategoryId} not found`)
+          throw new Error(`Category #${settingsData.defaultCategoryId} not found`)
+        }
 
-          setCurrentCategoryIndex(defaultCategoryIndex)
-          setCurrentCategory(settingsData.categories[defaultCategoryIndex])
-          setTemplates(settingsData.templates)
+        setCurrentCategoryIndex(defaultCategoryIndex)
+        setCurrentCategory(settingsData.categories[defaultCategoryIndex])
+        setTemplates(settingsData.templates)
 
-          // Find index of default template
-          const defaultIndex = settingsData.templates.findIndex(
-            (t) => t.id === settingsData.defaultTemplateId
-          )
+        const defaultIndex = settingsData.templates.findIndex(
+          (t) => t.id === settingsData.defaultTemplateId
+        )
 
-          if (defaultIndex === -1) {
-            throw new Error(`Template #${settingsData.defaultTemplateId} not found`)
-          }
+        if (defaultIndex === -1) {
+          throw new Error(`Template #${settingsData.defaultTemplateId} not found`)
+        }
 
-          setCurrentTemplateIndex(defaultIndex)
+        setCurrentTemplateIndex(defaultIndex)
 
-          const parsedTicketInfo = await ticketProvidersService.parseUrl(url ?? "")
+        const parsedTicketInfo = await currentTicketInfoService.get(url)
+
+        if (parsedTicketInfo) {
           setTicketInfo(parsedTicketInfo)
 
           const name = generateBranchName(
@@ -78,6 +79,9 @@ const Popup = () => {
             settingsData.categories[defaultCategoryIndex].name
           )
           setBranchName(name)
+        } else {
+          setTicketInfo(null)
+          setBranchName("")
         }
       }
     } catch (error) {

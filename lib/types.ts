@@ -1,4 +1,5 @@
 export type TicketInfo = {
+  url: string
   id?: string
   title?: string
   category?: string

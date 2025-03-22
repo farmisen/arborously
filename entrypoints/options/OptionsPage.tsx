@@ -242,6 +242,7 @@ const OptionsPage = () => {
       return generateBranchName(
         selectedTemplate.template,
         {
+          url: "https://example.com",
           id: previewData.id,
           title: previewData.title,
           category: categoryName
