@@ -1,4 +1,3 @@
-
 import { slugify } from "./slugify"
 import { type GeneratorOptions, type TicketInfo } from "./types"
 
