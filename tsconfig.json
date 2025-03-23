@@ -2,6 +2,10 @@
   "extends": "./.wxt/tsconfig.json",
   "compilerOptions": {
     "allowImportingTsExtensions": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "useDefineForClassFields": true,
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {

@@ -10,11 +10,6 @@ export interface TicketProvider {
   extractTicketInfo(url: string, titleText?: string): TicketInfo
 }
 
-// Interface for the static methods on provider classes
-export interface TicketProviderStatic {
-  getMatchPatterns(): string[]
-}
-
 export type TicketProvidersService = {
   registerProvider(provider: TicketProvider): void
   isTicketUrl(url: string): boolean
