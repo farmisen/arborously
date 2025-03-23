@@ -1,26 +1,18 @@
 import { Check, Plus, Trash2 } from "lucide-react"
-import { type Dispatch, type FC, type SetStateAction } from "react"
+import { type Dispatch, type FC, type SetStateAction, useEffect, useState } from "react"
 import {
   type Control,
   type UseFormGetValues,
   type UseFormSetValue
 } from "react-hook-form"
+import { z } from "zod"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { type NonEmptyTemplateArray, type Template } from "@/lib/types"
-import {
-  findInvalidGitBranchChars,
-  findInvalidPlaceholders,
-  findInvalidTemplateChars,
-  hasInvalidGitBranchChars,
-  hasInvalidPlaceholders,
-  isValidTemplate,
-  validPlaceholders
-} from "@/lib/validation"
 
-import { type FormData } from "./OptionsPage"
+import { type FormData, templateSchema } from "./OptionsPage"
 
 type BranchTemplatesSettingsProps = {
   control: Control<FormData>
@@ -40,9 +32,38 @@ const BranchTemplatesSettings: FC<BranchTemplatesSettingsProps> = ({
   getValues,
   setValue
 }) => {
+  const [nameError, setNameError] = useState<string | null>(null)
+  const [templateError, setTemplateError] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (newTemplate.name) {
+      try {
+        templateSchema.shape.name.parse(newTemplate.name)
+        setNameError(null)
+      } catch (error) {
+        if (error instanceof z.ZodError) {
+          setNameError(error.errors[0]?.message || "Invalid template name")
+        }
+      }
+    }
+
+    if (newTemplate.template) {
+      try {
+        templateSchema.shape.template.parse(newTemplate.template)
+        setTemplateError(null)
+      } catch (error) {
+        if (error instanceof z.ZodError) {
+          setTemplateError(error.errors[0]?.message || "Invalid template pattern")
+        }
+      }
+    } else {
+      setTemplateError(null)
+    }
+  }, [newTemplate.name, newTemplate.template])
+
   const addTemplate = () => {
-    if (newTemplate.name && newTemplate.template) {
-      const templates = getValues("templates")
+    if (newTemplate.name && newTemplate.template && !nameError && !templateError) {
+      const templates = getValues("templates") as NonEmptyTemplateArray
       const newId = (
         Math.max(...templates.map((t) => Number.parseInt(t.id)), 0) + 1
       ).toString()
@@ -62,7 +83,7 @@ const BranchTemplatesSettings: FC<BranchTemplatesSettingsProps> = ({
   }
 
   const removeTemplate = (id: string) => {
-    const templates = getValues("templates")
+    const templates = getValues("templates") as NonEmptyTemplateArray
     const filteredTemplates = templates.filter((t) => t.id !== id)
     // Casting is safe because we disable the remove button when only one template remains
     setValue("templates", filteredTemplates as NonEmptyTemplateArray, {
@@ -83,7 +104,7 @@ const BranchTemplatesSettings: FC<BranchTemplatesSettingsProps> = ({
     <Card>
       <CardHeader>
         <CardDescription>
-          Create and manage your branch naming templates.
+          Create and manage your branch naming templates
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -91,46 +112,48 @@ const BranchTemplatesSettings: FC<BranchTemplatesSettingsProps> = ({
         <div className="space-y-4">
           <h3 className="text-sm font-medium">Your Templates</h3>
           <div className="space-y-2">
-            {watchTemplates.map((template) => (
-              <div
-                key={template.id}
-                className="flex items-center justify-between p-3 border rounded-md">
-                <div className="space-y-1">
-                  <div className="font-medium">{template.name}</div>
-                  <div className="text-sm text-muted-foreground">
-                    {template.template}
+            {watchTemplates.map((template) => {
+              return (
+                <div
+                  key={template.id}
+                  className="flex items-center justify-between p-3 border rounded-md">
+                  <div className="space-y-1">
+                    <div className="font-medium">{template.name}</div>
+                    <div className="text-sm text-muted-foreground">
+                      {template.template}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      type="button"
+                      variant={
+                        watchDefaultTemplateId === template.id ? "secondary" : "outline"
+                      }
+                      size="sm"
+                      className="h-8"
+                      onClick={() =>
+                        setValue("defaultTemplateId", template.id, {
+                          shouldDirty: true,
+                          shouldTouch: true
+                        })
+                      }>
+                      {watchDefaultTemplateId === template.id && (
+                        <Check className="h-4 w-4 mr-1" />
+                      )}
+                      Default
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => removeTemplate(template.id)}
+                      disabled={watchTemplates.length <= 1}>
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Button
-                    type="button"
-                    variant={
-                      watchDefaultTemplateId === template.id ? "secondary" : "outline"
-                    }
-                    size="sm"
-                    className="h-8"
-                    onClick={() =>
-                      setValue("defaultTemplateId", template.id, {
-                        shouldDirty: true,
-                        shouldTouch: true
-                      })
-                    }>
-                    {watchDefaultTemplateId === template.id && (
-                      <Check className="h-4 w-4 mr-1" />
-                    )}
-                    Default
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => removeTemplate(template.id)}
-                    disabled={watchTemplates.length <= 1}>
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         </div>
 
@@ -149,17 +172,10 @@ const BranchTemplatesSettings: FC<BranchTemplatesSettingsProps> = ({
                   setNewTemplate({ ...newTemplate, name: e.target.value })
                 }}
                 placeholder="e.g., Feature Branch"
-                className={
-                  newTemplate.name && hasInvalidGitBranchChars(newTemplate.name)
-                    ? "border-destructive"
-                    : ""
-                }
+                className={nameError ? "border-destructive" : ""}
               />
-              {newTemplate.name && hasInvalidGitBranchChars(newTemplate.name) && (
-                <div className="text-destructive text-xs mt-1">
-                  Contains invalid characters:{" "}
-                  {`Contains invalid characters:${findInvalidGitBranchChars(newTemplate.name).join(", ")}`}
-                </div>
+              {nameError && (
+                <div className="text-destructive text-xs mt-1">{nameError}</div>
               )}
             </div>
             <div>
@@ -173,31 +189,10 @@ const BranchTemplatesSettings: FC<BranchTemplatesSettingsProps> = ({
                   setNewTemplate({ ...newTemplate, template: e.target.value })
                 }}
                 placeholder="e.g., {category}/{id}-{title}"
-                className={
-                  newTemplate.template && !isValidTemplate(newTemplate.template)
-                    ? "border-destructive"
-                    : ""
-                }
+                className={templateError ? "border-destructive" : ""}
               />
-              {newTemplate.template &&
-                !validPlaceholders.some((p) => newTemplate.template.includes(p)) && (
-                  <div className="text-destructive text-xs mt-1">
-                    {
-                      "Must include at least one placeholder: {id}, {title}, {category}, {username}"
-                    }
-                  </div>
-                )}
-              {newTemplate.template &&
-                validPlaceholders.some((p) => newTemplate.template.includes(p)) &&
-                !isValidTemplate(newTemplate.template) && (
-                  <div className="text-destructive text-xs mt-1">
-                    {`Contains invalid characters: ${findInvalidTemplateChars(newTemplate.template).join(", ")}`}
-                  </div>
-                )}
-              {newTemplate.template && hasInvalidPlaceholders(newTemplate.template) && (
-                <div className="text-destructive text-xs mt-1">
-                  {`Contains invalid placeholders:${findInvalidPlaceholders(newTemplate.template).join(", ")}`}
-                </div>
+              {templateError && (
+                <div className="text-destructive text-xs mt-1">{templateError}</div>
               )}
               <div className="text-muted-foreground text-xs mt-1">
                 {"Valid placeholders: {id}, {title}, {category}, {username}"}
@@ -210,10 +205,8 @@ const BranchTemplatesSettings: FC<BranchTemplatesSettingsProps> = ({
             disabled={
               !newTemplate.name ||
               !newTemplate.template ||
-              hasInvalidGitBranchChars(newTemplate.name) ||
-              !isValidTemplate(newTemplate.template) ||
-              !validPlaceholders.some((p) => newTemplate.template.includes(p)) ||
-              hasInvalidPlaceholders(newTemplate.template)
+              nameError !== null ||
+              templateError !== null
             }>
             <Plus className="h-4 w-4 mr-2" /> Add Template
           </Button>

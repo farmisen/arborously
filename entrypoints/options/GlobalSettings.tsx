@@ -1,8 +1,16 @@
-import { type FC } from "react"
+import { ChevronDown } from "lucide-react"
+import { type FC, useState } from "react"
 import { type Control } from "react-hook-form"
 
+import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu"
 import {
   FormControl,
   FormField,
@@ -12,11 +20,6 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
-import {
-  findInvalidGitBranchChars,
-  hasInvalidGitBranchChars,
-  invalidGitBranchChars
-} from "@/lib/validation"
 
 import { type FormData } from "./OptionsPage"
 
@@ -24,7 +27,15 @@ type GlobalSettingsProps = {
   control: Control<FormData>
 }
 
+// Define common replacement characters
+const REPLACEMENT_CHARACTERS = [
+  { value: "-", label: "Dash (-)" },
+  { value: "_", label: "Underscore (_)" }
+]
+
 const GlobalSettings: FC<GlobalSettingsProps> = ({ control }) => {
+  const [dropdownOpen, setDropdownOpen] = useState(false)
+
   return (
     <Card>
       <CardHeader>
@@ -37,34 +48,24 @@ const GlobalSettings: FC<GlobalSettingsProps> = ({ control }) => {
           control={control}
           name="username"
           render={({ field }) => (
-            <FormItem className="flex items-center gap-4">
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <FormLabel className="mb-0 w-32 cursor-help">Username</FormLabel>
-                </TooltipTrigger>
-                <TooltipContent side="bottom">
-                  This will be used in branch templates with the {`{username} `}
-                  placeholder. Must only contain valid Git branch characters.
-                </TooltipContent>
-              </Tooltip>
-              <div className="flex flex-col">
+            <FormItem className="flex flex-col">
+              <div className="flex items-center gap-4">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <FormLabel className="mb-0 w-32 cursor-help">Username</FormLabel>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom">
+                    This will be used in branch templates with the {`{username} `}
+                    placeholder.
+                  </TooltipContent>
+                </Tooltip>
                 <FormControl>
-                  <Input
-                    placeholder="your_user_name"
-                    {...field}
-                    onChange={(e) => {
-                      field.onChange(e)
-                    }}
-                    className={`w-48 ${field.value && hasInvalidGitBranchChars(field.value) ? "border-destructive" : ""}`}
-                  />
+                  <Input placeholder="your_user_name" {...field} className="w-48" />
                 </FormControl>
-                {field.value && hasInvalidGitBranchChars(field.value) && (
-                  <div className="text-destructive text-xs mt-1">
-                    {`Contains invalid characters: ${findInvalidGitBranchChars(field.value).join(", ")}`}
-                  </div>
-                )}
               </div>
-              <FormMessage className="absolute right-0 -bottom-5 text-xs" />
+              <div className="ml-36 -mt-1">
+                <FormMessage className="text-xs" />
+              </div>
             </FormItem>
           )}
         />
@@ -73,23 +74,25 @@ const GlobalSettings: FC<GlobalSettingsProps> = ({ control }) => {
           control={control}
           name="enforceLowercase"
           render={({ field }) => (
-            <FormItem className="flex items-center gap-4">
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <FormLabel className="mb-0 w-32 cursor-help">
-                    Enforce Lowercase
-                  </FormLabel>
-                </TooltipTrigger>
-                <TooltipContent side="bottom">
-                  Convert all branch names to lowercase
-                </TooltipContent>
-              </Tooltip>
-              <div className="flex items-center">
+            <FormItem className="flex flex-col">
+              <div className="flex items-center gap-4">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <FormLabel className="mb-0 w-32 cursor-help">
+                      Enforce Lowercase
+                    </FormLabel>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom">
+                    Convert all branch names to lowercase
+                  </TooltipContent>
+                </Tooltip>
                 <FormControl>
                   <Checkbox checked={field.value} onCheckedChange={field.onChange} />
                 </FormControl>
               </div>
-              <FormMessage className="absolute right-0 -bottom-5 text-xs" />
+              <div className="ml-36 -mt-1">
+                <FormMessage className="text-xs" />
+              </div>
             </FormItem>
           )}
         />
@@ -98,35 +101,50 @@ const GlobalSettings: FC<GlobalSettingsProps> = ({ control }) => {
           control={control}
           name="replacementCharacter"
           render={({ field }) => (
-            <FormItem className="flex items-center gap-4">
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <FormLabel className="mb-0 w-32 cursor-help">
-                    Replacement Character
-                  </FormLabel>
-                </TooltipTrigger>
-                <TooltipContent side="bottom">
-                  Character to use when replacing spaces and invalid characters in
-                  branch names. Cannot use spaces or special characters (~^:?*[\].).
-                </TooltipContent>
-              </Tooltip>
-              <div className="flex flex-col">
+            <FormItem className="flex flex-col">
+              <div className="flex items-center gap-4">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <FormLabel className="mb-0 w-32 cursor-help">
+                      Replacement Character
+                    </FormLabel>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom">
+                    Character to use when replacing spaces and invalid characters in
+                    branch names. Choose the character you prefer for readable branch
+                    names.
+                  </TooltipContent>
+                </Tooltip>
                 <FormControl>
-                  <Input
-                    {...field}
-                    maxLength={1}
-                    className={`w-10 text-center ${
-                      field.value && invalidGitBranchChars.test(field.value)
-                        ? "border-destructive"
-                        : ""
-                    }`}
-                  />
+                  <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className="w-32 justify-between"
+                        aria-label="Select a replacement character">
+                        {field.value || "Select..."}{" "}
+                        <ChevronDown className="h-4 w-4 opacity-50" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start">
+                      {REPLACEMENT_CHARACTERS.map((char) => (
+                        <DropdownMenuItem
+                          key={char.value}
+                          onClick={() => {
+                            field.onChange(char.value)
+                            setDropdownOpen(false)
+                          }}
+                          className={field.value === char.value ? "bg-accent" : ""}>
+                          {char.label}
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </FormControl>
-                {field.value && invalidGitBranchChars.test(field.value) && (
-                  <div className="text-destructive text-xs mt-1">Invalid character</div>
-                )}
               </div>
-              <FormMessage className="absolute right-0 -bottom-5 text-xs" />
+              <div className="ml-36 -mt-1">
+                <FormMessage className="text-xs" />
+              </div>
             </FormItem>
           )}
         />

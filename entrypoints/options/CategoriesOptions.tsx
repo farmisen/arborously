@@ -1,15 +1,15 @@
 import { Check, Plus, Trash2 } from "lucide-react"
-import { type Dispatch, type FC, type SetStateAction } from "react"
+import { type Dispatch, type FC, type SetStateAction, useEffect, useState } from "react"
 import { type UseFormGetValues, type UseFormSetValue } from "react-hook-form"
+import { z } from "zod"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { type Category, type NonEmptyCategoryArray } from "@/lib/types"
-import { findInvalidGitBranchChars, hasInvalidGitBranchChars } from "@/lib/validation"
 
-import { type FormData } from "./OptionsPage"
+import { type FormData, categorySchema } from "./OptionsPage"
 
 type CategoriesSettingsProps = {
   watchCategories: Category[]
@@ -28,9 +28,25 @@ const CategoriesSettings: FC<CategoriesSettingsProps> = ({
   getValues,
   setValue
 }) => {
-  const addCategory = () => {
+  const [categoryError, setCategoryError] = useState<string | null>(null)
+
+  useEffect(() => {
     if (newCategory) {
-      const categories = getValues("categories")
+      try {
+        categorySchema.shape.name.parse(newCategory)
+        setCategoryError(null)
+      } catch (error) {
+        if (error instanceof z.ZodError) {
+          setCategoryError(error.errors[0]?.message || "Invalid category name")
+        }
+      }
+    } else {
+      setCategoryError(null)
+    }
+  }, [newCategory])
+  const addCategory = () => {
+    if (newCategory && !categoryError) {
+      const categories = getValues("categories") as NonEmptyCategoryArray
       const newId = (
         Math.max(...categories.map((c) => Number.parseInt(c.id)), 0) + 1
       ).toString()
@@ -43,7 +59,7 @@ const CategoriesSettings: FC<CategoriesSettingsProps> = ({
   }
 
   const removeCategory = (id: string) => {
-    const categories = getValues("categories")
+    const categories = getValues("categories") as NonEmptyCategoryArray
     const filteredCategories = categories.filter((c) => c.id !== id)
     // Casting is safe because the UI disables removal when categories.length <= 1
     setValue("categories", filteredCategories as NonEmptyCategoryArray, {
@@ -120,27 +136,18 @@ const CategoriesSettings: FC<CategoriesSettingsProps> = ({
                   setNewCategory(e.target.value)
                 }}
                 placeholder="e.g., feat, bug, chore"
-                className={
-                  newCategory && hasInvalidGitBranchChars(newCategory)
-                    ? "border-destructive"
-                    : ""
-                }
+                className={categoryError ? "border-destructive" : ""}
               />
               <Button
                 type="button"
                 onClick={addCategory}
-                disabled={!newCategory || hasInvalidGitBranchChars(newCategory)}>
+                disabled={!newCategory || categoryError !== null}>
                 <Plus className="h-4 w-4 mr-2" /> Add
               </Button>
             </div>
-            {newCategory && hasInvalidGitBranchChars(newCategory) && (
-              <div className="text-destructive text-xs">
-                {`Contains invalid characters: ${findInvalidGitBranchChars(newCategory).join(", ")}`}
-              </div>
+            {categoryError && (
+              <div className="text-destructive text-xs">{categoryError}</div>
             )}
-            <div className="text-muted-foreground text-xs">
-              Categories must only contain valid Git branch characters
-            </div>
           </div>
         </div>
       </CardContent>
