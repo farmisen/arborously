@@ -12,7 +12,7 @@ export default defineConfig({
         id: "arborously@codery-royale.com"
       }
     },
-    permissions: ["tabs", "storage"],
+    permissions: ["tabs", "storage", "scripting"],
     icons: {
       16: "icon/trunk-arborously-16.png",
       24: "icon/trunk-arborously-24.png",
