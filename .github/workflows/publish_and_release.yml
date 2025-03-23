@@ -57,7 +57,7 @@ jobs:
           echo "New version: $NEW_VERSION"
           
           # Update package.json
-          node -e "const pkg = require('./package.json'); pkg.version = '${NEW_VERSION}'; fs.writeFileSync('./package.json', JSON.stringify(pkg, null, 2) + '\n')"
+          node -e "const fs = require('fs'); const pkg = require('./package.json'); pkg.version = '${NEW_VERSION}'; fs.writeFileSync('./package.json', JSON.stringify(pkg, null, 2) + '\n')"
           
           echo "new_version=${NEW_VERSION}" >> $GITHUB_OUTPUT
 
