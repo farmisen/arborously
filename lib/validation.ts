@@ -1,16 +1,16 @@
 import { z } from "zod"
 
-export const validPlaceholders = ["{id}", "{title}", "{category}", "{username}"]
-export const validGitSegmentBranchNameRegex = /^[a-zA-Z0-9_-]+$/
-export const validGitSegmentBranchNameWithSlashRegex = /^[a-zA-Z0-9_\/-]+$/
+const validPlaceholders = ["{id}", "{title}", "{category}", "{username}"]
+const validGitSegmentBranchNameRegex = /^[a-zA-Z0-9_-]+$/
+const validGitSegmentBranchNameWithSlashRegex = /^[a-zA-Z0-9_\/-]+$/
 
 export const isValidGitBranchSegmentName = (value: string): boolean =>
   validGitSegmentBranchNameRegex.test(value)
 
-export const isValidGitBranchSegmentNameWithSlash = (value: string): boolean =>
+const isValidGitBranchSegmentNameWithSlash = (value: string): boolean =>
   validGitSegmentBranchNameWithSlashRegex.test(value)
 
-export const isValidTemplate = (value: string): boolean => {
+const isValidTemplate = (value: string): boolean => {
   let valueWithoutPlaceholders = value
   validPlaceholders.forEach((placeholder) => {
     valueWithoutPlaceholders = valueWithoutPlaceholders.replaceAll(placeholder, "")
@@ -25,7 +25,7 @@ export const isValidTemplate = (value: string): boolean => {
   return isValid
 }
 
-export const findInvalidPlaceholders = (value: string): string[] => {
+const findInvalidPlaceholders = (value: string): string[] => {
   const invalidPlaceholders: string[] = []
 
   const placeholderRegex = /\{([^{}]+)\}/g
@@ -41,7 +41,7 @@ export const findInvalidPlaceholders = (value: string): string[] => {
   return invalidPlaceholders
 }
 
-export const hasInvalidPlaceholders = (value: string): boolean => {
+const hasInvalidPlaceholders = (value: string): boolean => {
   return findInvalidPlaceholders(value).length > 0
 }
 
@@ -74,23 +74,3 @@ export const templateNoInvalidPlaceholdersRefinement = z
   .refine((val) => !hasInvalidPlaceholders(val), {
     message: "Template contains invalid placeholders."
   })
-
-export const validateTemplatePattern = (pattern: string): string | null => {
-  if (!pattern) {
-    return null
-  }
-
-  if (!validPlaceholders.some((p) => pattern.includes(p))) {
-    return "Must include at least one placeholder."
-  }
-
-  if (!isValidTemplate(pattern)) {
-    return "Outside of placeholders, template must only contain alphanumeric characters, forward slashes (/), dashes (-), or underscores (_)."
-  }
-
-  if (hasInvalidPlaceholders(pattern)) {
-    return `Contains invalid placeholders: ${findInvalidPlaceholders(pattern).join(", ")}`
-  }
-
-  return null
-}

@@ -4,7 +4,7 @@ import { type TicketInfo } from "./types"
 
 const ticketInfos = new Map<string, TicketInfo>()
 
-export type CurrentTicketInfoService = {
+type CurrentTicketInfoService = {
   set(url: string, ticketInfo: TicketInfo): void
   get(url: string): TicketInfo | undefined
   reset(): void

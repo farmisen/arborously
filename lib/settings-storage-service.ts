@@ -10,7 +10,7 @@ type StorageSchema = {
 }
 const storage = defineExtensionStorage<StorageSchema>(browser.storage.local)
 
-export type SettingsStorageService = {
+type SettingsStorageService = {
   set(settings: Settings): Promise<Settings>
   get(): Promise<Settings>
   reset(): Promise<Settings>
