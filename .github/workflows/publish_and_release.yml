@@ -93,11 +93,3 @@ jobs:
           asset_name: arborously-${{ steps.bump-version.outputs.new_version }}-firefox.zip
           tag: "v${{ steps.bump-version.outputs.new_version }}"
           overwrite: true
-
-      - name: Create Release
-        uses: elgohr/Github-Release-Action@v5
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          title: "v${{ steps.bump-version.outputs.new_version }}"
-          tag: "v${{ steps.bump-version.outputs.new_version }}"
