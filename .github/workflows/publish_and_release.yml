@@ -1,0 +1,103 @@
+name: Publish & Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump_type:
+        description: 'Version bump type (major/minor/patch)'
+        required: true
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+
+permissions:
+  contents: write
+
+jobs:
+  publish_and_release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Bump version in package.json
+        id: bump-version
+        run: |
+          # Get current version
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          echo "Current version: $CURRENT_VERSION"
+          
+          # Calculate new version
+          if [[ "${{ github.event.inputs.bump_type }}" == "patch" ]]; then
+            NEW_VERSION=$(node -p "const [major, minor, patch] = '${CURRENT_VERSION}'.split('.'); \`\${major}.\${minor}.\${Number(patch) + 1}\`")
+          elif [[ "${{ github.event.inputs.bump_type }}" == "minor" ]]; then
+            NEW_VERSION=$(node -p "const [major, minor, patch] = '${CURRENT_VERSION}'.split('.'); \`\${major}.\${Number(minor) + 1}.0\`")
+          elif [[ "${{ github.event.inputs.bump_type }}" == "major" ]]; then
+            NEW_VERSION=$(node -p "const [major, minor, patch] = '${CURRENT_VERSION}'.split('.'); \`\${Number(major) + 1}.0.0\`")
+          fi
+          
+          echo "New version: $NEW_VERSION"
+          
+          # Update package.json
+          node -e "const pkg = require('./package.json'); pkg.version = '${NEW_VERSION}'; fs.writeFileSync('./package.json', JSON.stringify(pkg, null, 2) + '\n')"
+          
+          echo "new_version=${NEW_VERSION}" >> $GITHUB_OUTPUT
+
+      - name: Commit version changes
+        run: |
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'github-actions@github.com'
+          git add package.json
+          git commit -m "Release v${{ steps.bump-version.outputs.new_version }}"
+          git tag "v${{ steps.bump-version.outputs.new_version }}"
+          git push --atomic origin HEAD:${GITHUB_REF#refs/heads/} "v${{ steps.bump-version.outputs.new_version }}"
+
+      - name: Build Chrome extension
+        run: pnpm zip
+
+      - name: Build Firefox extension
+        run: pnpm zip:firefox
+
+      - name: Upload Chrome extension
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: .output/arborously-${{ steps.bump-version.outputs.new_version }}-chrome.zip
+          asset_name: arborously-${{ steps.bump-version.outputs.new_version }}-chrome.zip
+          tag: "v${{ steps.bump-version.outputs.new_version }}"
+          overwrite: true
+
+      - name: Upload Firefox extension
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: .output/arborously-${{ steps.bump-version.outputs.new_version }}-firefox.zip
+          asset_name: arborously-${{ steps.bump-version.outputs.new_version }}-firefox.zip
+          tag: "v${{ steps.bump-version.outputs.new_version }}"
+          overwrite: true
+
+      - name: Create Release
+        uses: elgohr/Github-Release-Action@v5
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          title: "v${{ steps.bump-version.outputs.new_version }}"
+          tag: "v${{ steps.bump-version.outputs.new_version }}"

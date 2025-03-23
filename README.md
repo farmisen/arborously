@@ -12,30 +12,43 @@ A browser extension that automatically generates standardized git branch names f
 
 ## Installation
 
+### Easy Installation (Recommended)
+
 ### Chrome/Edge
 
-1. Build the extension for Chrome: `pnpm build`
+1. Download the latest Chrome release from [GitHub Releases](https://github.com/farmisen/arborously/releases)
 2. Open Chrome/Edge and navigate to `chrome://extensions` or `edge://extensions`
 3. Enable "Developer mode"
-4. Click "Load unpacked" and select `.output/chrome-mv3` folder
+4. Drag and drop the downloaded `arborously-x.y.z-chrome.zip` file onto the extensions page
 
 ### Firefox
 
-1. Bundle the extension for Firefox: `pnpm zip:firefox`
+1. Download the latest Firefox release from [GitHub Releases](https://github.com/farmisen/arborously/releases)
 2. Open Firefox and navigate to `about:debugging`
 3. Click "This Firefox" in the left sidebar
-4. Click "Load Temporary Add-on..." and select `.output/arborously-x-y-z-firefox.zip
+4. Click "Load Temporary Add-on..." and select the downloaded `arborously-x.y.z-firefox.zip` file
 5. The extension will be loaded temporarily until you restart Firefox
 
 ### Firefox Nightly
 
-1. In the Firefox Nightly go to `about:config`
+1. In Firefox Nightly go to `about:config`
 2. Set `xpinstall.signatures.required` to false
-3. Bundle the extension for Firefox: `pnpm zip:firefox`
+3. Download the latest Firefox release from [GitHub Releases](https://github.com/farmisen/arborously/releases)
 4. Go to `about:addons`
 5. Click the cogwheel icon
-6. Select "Install Add-on From File..." and select `.output/arborously-x-y-z-firefox.zip
+6. Select "Install Add-on From File..." and select the downloaded `arborously-x.y.z-firefox.zip` file
 7. The extension will persist across restarts
+
+### Manual Build (For Development)
+
+If you prefer to build the extension yourself, please see the [Development](#development) section below.
+
+## Usage
+
+1. Navigate to a Trello card
+2. Click on the Arborously extension icon in your browser toolbar
+3. Select a template and tag for your branch
+4. Click "Copy to Clipboard" to copy the generated branch name
 
 ## Development
 
@@ -78,13 +91,6 @@ pnpm compile
 # Create distributable zip
 pnpm zip
 ```
-
-## Usage
-
-1. Navigate to a Trello card
-2. Click on the Arborously extension icon in your browser toolbar
-3. Select a template and tag for your branch
-4. Click "Copy to Clipboard" to copy the generated branch name
 
 ## Contributing
 
