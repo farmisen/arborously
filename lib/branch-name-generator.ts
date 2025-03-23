@@ -1,5 +1,4 @@
-import slug from "slug"
-
+import { slugify } from "./slugify"
 import { type GeneratorOptions, type TicketInfo } from "./types"
 
 const defaultOptions = {
@@ -36,7 +35,7 @@ export const generateBranchName = (
 
   const processField = (value: string | undefined) => {
     if (value === undefined) return ""
-    return slug(value, { lower: options.lower, replacement: options.replacement })
+    return slugify(value, { lower: options.lower, replacement: options.replacement })
   }
 
   return urlTemplate
