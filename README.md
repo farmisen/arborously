@@ -1,4 +1,4 @@
-# Arborously 🌳 [![CI](https://github.com/farmisen/arborously/actions/workflows/ci.yml/badge.svg)](https://github.com/farmisen/arborously/actions/workflows/ci.yml)
+# ![logo](./public/icon/tree-arborously-24.png) Arborously [![CI](https://github.com/farmisen/arborously/actions/workflows/ci.yml/badge.svg)](https://github.com/farmisen/arborously/actions/workflows/ci.yml)
 
 A browser extension that automatically generates standardized git branch names from ticket information across various ticketing systems.
 
