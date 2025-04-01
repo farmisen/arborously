@@ -20,10 +20,13 @@ export class TrelloProvider implements TicketProvider {
       throw new Error("Not a valid Trello card URL")
     }
 
+    // Strip query parameters from title if present
+    const cleanTitle = match[3] ? match[3].split("?")[0].replace(/-/g, " ") : undefined
+
     return {
       url,
       id: match[2],
-      title: match[3] ? match[3].replace(/-/g, " ") : undefined,
+      title: cleanTitle,
       metadata: { uuid: match[1] }
     }
   }

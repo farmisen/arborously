@@ -15,6 +15,9 @@ describe("TrelloProvider", () => {
       expect(
         provider.isTicketUrl("https://www.trello.com/c/abcd1234/123-my-card-title")
       ).toBe(true)
+      expect(
+        provider.isTicketUrl("https://trello.com/c/abcd1234/123-card-title?param=value")
+      ).toBe(true)
     })
 
     it("should return false for invalid Trello URLs", () => {
@@ -60,6 +63,19 @@ describe("TrelloProvider", () => {
         url,
         id: "123",
         title: "implement new feature for project",
+        metadata: { uuid: "abcd1234" }
+      })
+    })
+
+    it("should strip query parameters from card titles", () => {
+      const url =
+        "https://trello.com/c/abcd1234/123-implement-feature?param1=value1&param2=value2"
+      const result = provider.extractTicketInfo(url)
+
+      expect(result).toEqual({
+        url,
+        id: "123",
+        title: "implement feature",
         metadata: { uuid: "abcd1234" }
       })
     })
