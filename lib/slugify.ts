@@ -1,3 +1,6 @@
+import * as emoji from "node-emoji"
+import unidecode from "unidecode"
+
 /**
  * Default options for slugify function
  */
@@ -32,6 +35,16 @@ export const slugify = (
 
   // Process the string in steps
   let result = opts.lower ? str.toLowerCase() : str
+
+  try {
+    result = decodeURIComponent(result)
+  } catch {} // Ignore decoding errors
+
+  // Replace emojis with their text representation
+  result = emoji.unemojify(result)
+
+  // Replace non-ASCII characters with their closest ASCII equivalent
+  result = unidecode(result)
 
   // Replace non-alphanumeric characters with the replacement character
   result = result.replace(/[^a-z0-9]+/gi, opts.replacement)
