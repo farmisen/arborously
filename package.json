@@ -70,7 +70,6 @@
     "tailwindcss": "^4.0.13",
     "tailwindcss-animate": "^1.0.7",
     "toast": "^0.5.4",
-    "transliteration": "^2.3.5",
     "unidecode": "^1.1.0",
     "use-debounce": "^10.0.4",
     "zod": "^3.24.2"

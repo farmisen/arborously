@@ -83,9 +83,6 @@ importers:
       toast:
         specifier: ^0.5.4
         version: 0.5.4(react@19.0.0)
-      transliteration:
-        specifier: ^2.3.5
-        version: 2.3.5
       unidecode:
         specifier: ^1.1.0
         version: 1.1.0
@@ -4060,11 +4057,6 @@ packages:
 
   toast@0.5.4:
     resolution: {integrity: sha512-/0us8QyyJJ3jGKCOfJNYfxiDlABDmQDs8mePVcTEabwHH31KyFw3kS2nMeydTFVcHAhm4bWuNRHwIPPTcF8tfQ==}
-    hasBin: true
-
-  transliteration@2.3.5:
-    resolution: {integrity: sha512-HAGI4Lq4Q9dZ3Utu2phaWgtm3vB6PkLUFqWAScg/UW+1eZ/Tg6Exo4oC0/3VUol/w4BlefLhUUSVBr/9/ZGQOw==}
-    engines: {node: '>=6.0.0'}
     hasBin: true
 
   true-myth@4.1.1:
@@ -8493,10 +8485,6 @@ snapshots:
       react-helmet: 6.1.0(react@19.0.0)
     transitivePeerDependencies:
       - react
-
-  transliteration@2.3.5:
-    dependencies:
-      yargs: 17.7.2
 
   true-myth@4.1.1: {}
 

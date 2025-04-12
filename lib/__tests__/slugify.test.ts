@@ -117,7 +117,6 @@ describe("slugify", () => {
     expect(slugify("brackets [text] (more) {even}")).toBe("brackets-text-more-even")
   })
 
-  
   describe("Unicode and emojis handling", () => {
     it("should handle emoji", () => {
       expect(slugify("Hello 👋 World 🌍")).toBe("hello-wave-world-earth-africa")
@@ -134,7 +133,6 @@ describe("slugify", () => {
     it("should handle mixed Latin and non-Latin scripts", () => {
       expect(slugify("こんにちは World")).toBe("konnitiha-world")
     })
-  
 
     it("should handle URL-encoded emoji", () => {
       expect(slugify("%F0%9F%A6%98 Kangaroo")).toBe("kangaroo-kangaroo")
