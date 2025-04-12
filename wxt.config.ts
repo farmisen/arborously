@@ -29,5 +29,8 @@ export default defineConfig({
   vite: () => ({
     plugins: [tailwindcss()],
     modules: ["@wxt-dev/module-react"]
-  })
+  }),
+  runner: {
+    chromiumArgs: ["--user-data-dir=./.wxt/chrome-data"]
+  }
 })

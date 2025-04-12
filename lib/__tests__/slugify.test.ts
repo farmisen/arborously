@@ -35,10 +35,6 @@ describe("slugify", () => {
     expect(slugify("UPPERCASE text")).toBe("uppercase-text")
   })
 
-  it("should handle emoji", () => {
-    expect(slugify("Hello 👋 World 🌍")).toBe("hello-world")
-  })
-
   it("should handle hyphens", () => {
     expect(slugify("hello-world", { replacement: "_" })).toBe("hello_world")
   })
@@ -121,18 +117,43 @@ describe("slugify", () => {
     expect(slugify("brackets [text] (more) {even}")).toBe("brackets-text-more-even")
   })
 
-  it("should handle non-Latin scripts", () => {
-    // Base64 of "你好世界" is "5L2g5aW95LiW55WM"
-    expect(slugify("你好世界")).toBe("5L2g5aW95LiW55WM")
+  
+  describe("Unicode and emojis handling", () => {
+    it("should handle emoji", () => {
+      expect(slugify("Hello 👋 World 🌍")).toBe("hello-wave-world-earth-africa")
+    })
 
-    // Base64 of "Привет мир" is "0J/RgNC40LLQtdGCINC80LjRgA=="
-    expect(slugify("Привет мир")).toBe("0J-RgNC40LLQtdGCINC80LjRgA")
+    it("should handle non-Latin scripts", () => {
+      expect(slugify("你好世界")).toBe("Ni-Hao-Shi-Jie")
 
-    // Base64 of "مرحبا بالعالم" is "2YXYsdit2KjYpyDYqNin2YTYudin2YTZhQ=="
-    expect(slugify("مرحبا بالعالم")).toBe("2YXYsdit2KjYpyDYqNin2YTYudin2YTZhQ")
-  })
+      expect(slugify("Привет мир")).toBe("privet-mir")
 
-  it("should handle mixed Latin and non-Latin scripts", () => {
-    expect(slugify("こんにちは World")).toBe("world")
+      expect(slugify("مرحبا بالعالم")).toBe("mrHb-bl-lm")
+    })
+
+    it("should handle mixed Latin and non-Latin scripts", () => {
+      expect(slugify("こんにちは World")).toBe("konnitiha-world")
+    })
+  
+
+    it("should handle URL-encoded emoji", () => {
+      expect(slugify("%F0%9F%A6%98 Kangaroo")).toBe("kangaroo-kangaroo")
+    })
+
+    it("should handle multiple URL-encoded characters", () => {
+      expect(slugify("%F0%9F%A6%8A%F0%9F%A6%81")).toBe("fox-face-lion")
+    })
+
+    it("should handle mixed URL-encoded and regular emoji", () => {
+      expect(slugify("🔧 Fix %F0%9F%94%A7 emoji")).toBe("wrench-fix-wrench-emoji")
+    })
+
+    it("should handle URL-encoded non-emoji characters", () => {
+      expect(slugify("Hello%20World")).toBe("hello-world")
+    })
+
+    it("should handle URL-encoded characters with custom separator", () => {
+      expect(slugify("Fix %F0%9F%A6%B0 issue", { replacement: "_" })).toBe("fix_issue")
+    })
   })
 })
