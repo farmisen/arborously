@@ -97,7 +97,7 @@ const Popup = () => {
       </div>
       <Separator />
       <div className="p-4">
-        <div className="space-y-">
+        <div className="space-y-2">
           {/* Content display (branch name, PR title, or ticket URL) */}
           <div className="flex">
             <Input

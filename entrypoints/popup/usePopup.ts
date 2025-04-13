@@ -236,7 +236,7 @@ export const usePopup = (): [PopupState, TemplateGenerationActions] => {
 
   useEffect(() => {
     void fetchExtensionVersion()
-  })
+  }, [fetchExtensionVersion])
 
   return [
     {
