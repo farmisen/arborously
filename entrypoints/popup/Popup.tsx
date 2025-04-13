@@ -35,9 +35,9 @@ const Popup = () => {
   // Setup keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "a") {
+      if (e.key === "a" && mode === PopupMode.BRANCH_NAME) {
         changeCategory("prev")
-      } else if (e.key === "d") {
+      } else if (e.key === "d" && mode === PopupMode.BRANCH_NAME) {
         changeCategory("next")
       } else if (e.key === " ") {
         changeMode()
@@ -51,7 +51,7 @@ const Popup = () => {
     return () => {
       window.removeEventListener("keydown", handleKeyDown)
     }
-  }, [changeCategory, changeMode])
+  }, [changeCategory, changeMode, mode])
 
   const copyToClipboard = async () => {
     await navigator.clipboard.writeText(content)
@@ -130,15 +130,17 @@ const Popup = () => {
                   (<kbd className="px-1 bg-muted rounded">space</kbd>)
                 </div>
               </div>
-              <div className="flex gap-2">
-                <div>
-                  Category: {currentCategoryIndex + 1}/{categories.length}
+              {mode === PopupMode.BRANCH_NAME && (
+                <div className="flex gap-2">
+                  <div>
+                    Category: {currentCategoryIndex + 1}/{categories.length}
+                  </div>
+                  <div>
+                    (<kbd className="px-1 bg-muted rounded">a</kbd>/
+                    <kbd className="px-1 bg-muted rounded">d</kbd>)
+                  </div>
                 </div>
-                <div>
-                  (<kbd className="px-1 bg-muted rounded">a</kbd>/
-                  <kbd className="px-1 bg-muted rounded">d</kbd>)
-                </div>
-              </div>
+              )}
             </div>
           </div>
         </div>

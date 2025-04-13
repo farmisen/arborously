@@ -158,9 +158,12 @@ export const usePopup = (): [TemplateGenerationState, TemplateGenerationActions]
     }
   }, [generateTemplates])
 
-  // Function to change the current category
+  // Function to change the current category - only active in branch name mode
   const changeCategory = useCallback(
     (direction: "prev" | "next") => {
+      // Only allow category switching in branch name mode
+      if (mode !== PopupMode.BRANCH_NAME) return
+
       if (!categories.length || !ticketInfo || !settings) return
 
       // Calculate new category index
@@ -191,7 +194,7 @@ export const usePopup = (): [TemplateGenerationState, TemplateGenerationActions]
       setBranchName(name)
       setPrTitle(title)
     },
-    [currentCategoryIndex, categories, ticketInfo, settings, generateTemplates]
+    [currentCategoryIndex, categories, ticketInfo, settings, generateTemplates, mode]
   )
 
   // Function to cycle through modes
