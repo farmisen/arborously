@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 
 import { generateName } from "@/lib/branch-name-generator"
 import { getCurrentTicketInfoService } from "@/lib/current-ticket-info-service"
@@ -8,7 +8,7 @@ import { type Category, PopupMode, type Settings, type TicketInfo } from "@/lib/
 const settingsStorageService = getSettingsStorageService()
 const currentTicketInfoService = getCurrentTicketInfoService()
 
-export type TemplateGenerationState = {
+export type PopupState = {
   branchName: string
   prTitle: string
   categories: Category[]
@@ -16,6 +16,7 @@ export type TemplateGenerationState = {
   ticketInfo: TicketInfo | null
   settings: Settings | null
   mode: PopupMode
+  version: string
 }
 
 export type TemplateGenerationActions = {
@@ -24,7 +25,7 @@ export type TemplateGenerationActions = {
   changeMode: () => void
 }
 
-export const usePopup = (): [TemplateGenerationState, TemplateGenerationActions] => {
+export const usePopup = (): [PopupState, TemplateGenerationActions] => {
   // State
   const [branchName, setBranchName] = useState("")
   const [prTitle, setPrTitle] = useState("")
@@ -33,6 +34,22 @@ export const usePopup = (): [TemplateGenerationState, TemplateGenerationActions]
   const [ticketInfo, setTicketInfo] = useState<TicketInfo | null>(null)
   const [settings, setSettings] = useState<Settings | null>(null)
   const [mode, setMode] = useState<PopupMode>(PopupMode.BRANCH_NAME)
+  const [version, setVersion] = useState("")
+
+  /**
+   * Fetch and set the extension version from the manifest
+   */
+  const fetchExtensionVersion = useCallback(() => {
+    try {
+      // Get the manifest object
+      const manifest = browser.runtime.getManifest()
+      // Update the HTML element
+      setVersion(manifest.version)
+    } catch (error) {
+      console.error("Error fetching extension manifest:", error)
+      setVersion("N/A")
+    }
+  }, [])
 
   /**
    * Generate both templates based on current data with robust error handling
@@ -217,6 +234,10 @@ export const usePopup = (): [TemplateGenerationState, TemplateGenerationActions]
     })
   }, [settings])
 
+  useEffect(() => {
+    void fetchExtensionVersion()
+  })
+
   return [
     {
       branchName,
@@ -225,7 +246,8 @@ export const usePopup = (): [TemplateGenerationState, TemplateGenerationActions]
       currentCategoryIndex,
       ticketInfo,
       settings,
-      mode
+      mode,
+      version
     },
     {
       changeCategory,

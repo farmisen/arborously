@@ -17,7 +17,15 @@ const Popup = () => {
   const [copyDisabled, setCopyDisabled] = useState(true)
 
   const [
-    { branchName, prTitle, categories, currentCategoryIndex, ticketInfo, mode },
+    {
+      branchName,
+      prTitle,
+      categories,
+      currentCategoryIndex,
+      ticketInfo,
+      mode,
+      version
+    },
     { changeCategory, fetchTemplates, changeMode }
   ] = usePopup()
 
@@ -82,11 +90,14 @@ const Popup = () => {
           <h1 className="text-xl font-bold">Arborously</h1>
           <h2 className="italic">{description}</h2>
         </div>
-        <Icons />
+        <div className="flex gap-1 items-baseline">
+          <span className="text-xs text-muted-foreground">v{version}</span>
+          <Icons />
+        </div>
       </div>
       <Separator />
       <div className="p-4">
-        <div className="space-y-2">
+        <div className="space-y-">
           {/* Content display (branch name, PR title, or ticket URL) */}
           <div className="flex">
             <Input
@@ -116,7 +127,7 @@ const Popup = () => {
 
           {/* navigation */}
           <div className="text-sm text-muted-foreground">
-            <div className="flex justify-start mb-1 gap-2">
+            <div className="flex justify-start gap-2">
               <div className="flex gap-2">
                 <div>
                   Mode:{" "}
