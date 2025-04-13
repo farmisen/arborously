@@ -2,16 +2,10 @@ import { type Settings } from "./types"
 
 export const DEFAULT_SETTINGS: Settings = {
   username: "your_user_name",
-  templates: [
-    { id: "1", name: "Title", template: "{id}-{title}" },
-    { id: "2", name: "UserName, Title", template: "{username}/{id}-{title}" },
-    {
-      id: "3",
-      name: "UserName, Category, Title",
-      template: "{username}/{category}/{id}-{title}"
-    }
-  ],
-  defaultTemplateId: "1",
+  templates: {
+    branchName: "{username}/{category}/{id}-{title}",
+    prTitle: "[{id}] {Title}"
+  },
   categories: [
     { id: "1", name: "feat" },
     { id: "2", name: "bug" },
@@ -20,7 +14,6 @@ export const DEFAULT_SETTINGS: Settings = {
     { id: "5", name: "refactor" },
     { id: "6", name: "test" }
   ],
-  defaultCategoryId: "1",
   enforceLowercase: true,
   replacementCharacter: "-"
 }

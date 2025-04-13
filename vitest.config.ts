@@ -7,7 +7,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 export default defineConfig({
   test: {
     globals: true,
-    environment: "node"
+    environment: "node",
+    setupFiles: ["./vitest.setup.ts"]
   },
   resolve: {
     alias: {
