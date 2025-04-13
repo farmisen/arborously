@@ -10,36 +10,44 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Form } from "@/components/ui/form"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { generateBranchName } from "@/lib/branch-name-generator"
+import { generateName } from "@/lib/branch-name-generator"
 import { DEFAULT_SETTINGS } from "@/lib/constants"
 import { getSettingsStorageService } from "@/lib/settings-storage-service"
 import { type Settings } from "@/lib/types"
 import {
+  branchNameTemplateContainsValidPlaceholdersRefinement,
+  branchNameTemplateNoInvalidPlaceholdersRefinement,
   gitBranchNameRefinement,
   isValidGitBranchSegmentName,
-  templateContainsValidPlaceholdersRefinement,
-  templateIsValidRefinement,
-  templateNoInvalidPlaceholdersRefinement
+  prTitleTemplateContainsValidPlaceholdersRefinement,
+  prTitleTemplateIsValidRefinement,
+  prTitleTemplateNoInvalidPlaceholdersRefinement,
+  templateIsValidRefinement
 } from "@/lib/validation"
 
 import BranchTemplateSettings from "./BranchTemplateSettings"
 import CategoriesOptions from "./CategoriesOptions"
 import GlobalSettings from "./GlobalSettings"
 
-export const templateSchema = z.object({
-  id: z.string(),
-  name: z.string().min(2, {
-    message: "Template name must be at least 2 characters."
-  }),
-  template: z
-    .string()
-    .min(1, {
-      message: "Template pattern is required."
-    })
-    .pipe(templateContainsValidPlaceholdersRefinement)
-    .pipe(templateIsValidRefinement)
-    .pipe(templateNoInvalidPlaceholdersRefinement)
-})
+// Branch name template requires strict validation and lowercase placeholders only
+export const branchNameTemplateSchema = z
+  .string()
+  .min(1, {
+    message: "Template pattern is required."
+  })
+  .pipe(branchNameTemplateContainsValidPlaceholdersRefinement)
+  .pipe(templateIsValidRefinement)
+  .pipe(branchNameTemplateNoInvalidPlaceholdersRefinement)
+
+// PR title template allows any characters and capitalized placeholders
+export const prTitleTemplateSchema = z
+  .string()
+  .min(1, {
+    message: "Template pattern is required."
+  })
+  .pipe(prTitleTemplateContainsValidPlaceholdersRefinement)
+  .pipe(prTitleTemplateIsValidRefinement)
+  .pipe(prTitleTemplateNoInvalidPlaceholdersRefinement)
 
 export const categorySchema = z.object({
   id: z.string(),
@@ -62,14 +70,13 @@ const formSchema = z.object({
   )
     .optional()
     .or(z.literal("")),
-  templates: z.array(templateSchema).nonempty({
-    message: "At least one template is required."
+  templates: z.object({
+    branchName: branchNameTemplateSchema,
+    prTitle: prTitleTemplateSchema
   }),
-  defaultTemplateId: z.string(),
   categories: z.array(categorySchema).nonempty({
     message: "At least one category is required."
   }),
-  defaultCategoryId: z.string(),
   enforceLowercase: z.boolean(),
   replacementCharacter: z.string().min(1).max(1)
 })
@@ -97,10 +104,9 @@ const getInitialTab = (): TabValue => {
 
 const OptionsPage = () => {
   const [activeTab, setActiveTab] = useState<TabValue>(getInitialTab)
-  const [newTemplate, setNewTemplate] = useState({ name: "", template: "" })
   const [newCategory, setNewCategory] = useState("")
   const [previewData, setPreviewData] = useState({
-    id: "TASK-123",
+    id: "123",
     title: "Add new feature",
     category: "feat",
     username: "your_user_name"
@@ -190,25 +196,19 @@ const OptionsPage = () => {
   }, [form.formState.isValid, form.formState.isDirty, form.trigger, saveSettings])
 
   const watchTemplates = form.watch("templates")
-  const watchDefaultTemplateId = form.watch("defaultTemplateId")
   const watchCategories = form.watch("categories")
-  const watchDefaultCategoryId = form.watch("defaultCategoryId")
   const watchEnforceLowercase = form.watch("enforceLowercase")
   const watchReplacementCharacter = form.watch("replacementCharacter")
   const watchUsername = form.watch("username")
 
-  const generatePreview = () => {
-    const selectedTemplate = watchTemplates.find((t) => t.id === watchDefaultTemplateId)
-    if (!selectedTemplate) return ""
-
-    const selectedCategory = watchCategories.find(
-      (c) => c.id === watchDefaultCategoryId
-    )
-    const categoryName = selectedCategory ? selectedCategory.name : previewData.category
+  const generateBranchNamePreview = () => {
+    // Use the first category as default for preview
+    const categoryName =
+      watchCategories.length > 0 ? watchCategories[0].name : previewData.category
 
     try {
-      return generateBranchName(
-        selectedTemplate.template,
+      return generateName(
+        watchTemplates.branchName,
         {
           url: "https://example.com",
           id: previewData.id,
@@ -226,7 +226,37 @@ const OptionsPage = () => {
       )
     } catch (error) {
       console.error("Error generating branch name:", error)
-      return "Invalid template configuration"
+      return "Invalid branch name template configuration"
+    }
+  }
+
+  const generatePrTitlePreview = () => {
+    // Use the first category as default for preview
+    const categoryName =
+      watchCategories.length > 0 ? watchCategories[0].name : previewData.category
+
+    try {
+      return generateName(
+        watchTemplates.prTitle,
+        {
+          url: "https://example.com",
+          id: previewData.id,
+          title: previewData.title,
+          category: categoryName
+        },
+        watchUsername && watchUsername.length > 0
+          ? watchUsername
+          : previewData.username,
+        categoryName,
+        {
+          // For PR titles, we don't enforce lowercase
+          lower: false,
+          replacement: " "
+        }
+      )
+    } catch (error) {
+      console.error("Error generating PR title:", error)
+      return "Invalid PR title template configuration"
     }
   }
 
@@ -273,17 +303,28 @@ const OptionsPage = () => {
             <div>
               <h1 className="text-3xl font-bold">Arborously Options</h1>
               <p className="text-muted-foreground">
-                Configure your branch naming preferences
+                Configure your branch and PR title naming preferences
               </p>
             </div>
           </div>
-          {/* Branch Name Preview */}
+          {/* Previews */}
           <Card className="mb-6">
             <CardContent>
               <div className="space-y-4">
-                <h4 className="text-sm font-medium mb-2">Branch Name Preview:</h4>
-                <div className="p-3 bg-muted border rounded font-mono text-sm overflow-x-auto">
-                  {generatePreview()}
+                {/* Branch Name Preview */}
+                <div>
+                  <h4 className="text-sm font-medium mb-2">Branch Name Preview:</h4>
+                  <div className="p-3 bg-muted border rounded font-mono text-sm overflow-x-auto">
+                    {generateBranchNamePreview()}
+                  </div>
+                </div>
+
+                {/* PR Title Preview */}
+                <div>
+                  <h4 className="text-sm font-medium mb-2">PR Title Preview:</h4>
+                  <div className="p-3 bg-muted border rounded font-mono text-sm overflow-x-auto">
+                    {generatePrTitlePreview()}
+                  </div>
                 </div>
               </div>
             </CardContent>
@@ -300,7 +341,7 @@ const OptionsPage = () => {
               </TabsTrigger>
               <TabsTrigger value={TABS.TEMPLATES} className="flex items-center">
                 <Layers className="h-4 w-4 mr-2" />
-                Branch Templates
+                Templates
               </TabsTrigger>
               <TabsTrigger value={TABS.CATEGORIES} className="flex items-center">
                 <Tag className="h-4 w-4 mr-2" />
@@ -313,14 +354,11 @@ const OptionsPage = () => {
               <GlobalSettings control={form.control} />
             </TabsContent>
 
-            {/* Branch Templates Section */}
+            {/* Templates Section */}
             <TabsContent value={TABS.TEMPLATES}>
               <BranchTemplateSettings
                 control={form.control}
                 watchTemplates={watchTemplates}
-                watchDefaultTemplateId={watchDefaultTemplateId}
-                newTemplate={newTemplate}
-                setNewTemplate={setNewTemplate}
                 getValues={form.getValues}
                 setValue={form.setValue}
               />
@@ -330,7 +368,6 @@ const OptionsPage = () => {
             <TabsContent value={TABS.CATEGORIES}>
               <CategoriesOptions
                 watchCategories={watchCategories}
-                watchDefaultCategoryId={watchDefaultCategoryId}
                 newCategory={newCategory}
                 setNewCategory={setNewCategory}
                 getValues={form.getValues}

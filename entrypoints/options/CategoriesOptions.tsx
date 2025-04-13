@@ -1,4 +1,4 @@
-import { Check, Plus, Trash2 } from "lucide-react"
+import { Plus, Trash2 } from "lucide-react"
 import { type Dispatch, type FC, type SetStateAction, useEffect, useState } from "react"
 import { type UseFormGetValues, type UseFormSetValue } from "react-hook-form"
 import { z } from "zod"
@@ -13,7 +13,6 @@ import { type FormData, categorySchema } from "./OptionsPage"
 
 type CategoriesSettingsProps = {
   watchCategories: Category[]
-  watchDefaultCategoryId: string
   newCategory: string
   setNewCategory: Dispatch<SetStateAction<string>>
   getValues: UseFormGetValues<FormData>
@@ -22,7 +21,6 @@ type CategoriesSettingsProps = {
 
 const CategoriesSettings: FC<CategoriesSettingsProps> = ({
   watchCategories,
-  watchDefaultCategoryId,
   newCategory,
   setNewCategory,
   getValues,
@@ -66,14 +64,6 @@ const CategoriesSettings: FC<CategoriesSettingsProps> = ({
       shouldDirty: true,
       shouldTouch: true
     })
-
-    // If the default category is removed, set a new default
-    if (getValues("defaultCategoryId") === id && categories.length > 1) {
-      setValue("defaultCategoryId", filteredCategories[0].id, {
-        shouldDirty: true,
-        shouldTouch: true
-      })
-    }
   }
 
   return (
@@ -93,24 +83,6 @@ const CategoriesSettings: FC<CategoriesSettingsProps> = ({
                 key={category.id}
                 className="flex items-center gap-2 p-2 border rounded-md">
                 <Badge variant="outline">{category.name}</Badge>
-                <Button
-                  type="button"
-                  variant={
-                    watchDefaultCategoryId === category.id ? "secondary" : "outline"
-                  }
-                  size="sm"
-                  className="h-7 px-2"
-                  onClick={() =>
-                    setValue("defaultCategoryId", category.id, {
-                      shouldDirty: true,
-                      shouldTouch: true
-                    })
-                  }>
-                  {watchDefaultCategoryId === category.id && (
-                    <Check className="h-3 w-3 mr-1" />
-                  )}
-                  Default
-                </Button>
                 <Button
                   type="button"
                   variant="ghost"

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import { generateBranchName } from "../branch-name-generator"
+import { generateName } from "../branch-name-generator"
 import { type GeneratorOptions, type TicketInfo } from "../types"
 
 describe("generator", () => {
@@ -15,12 +15,7 @@ describe("generator", () => {
       const urlTemplate = "{username}/{category}/{id}-{title}"
       const defaultCategory = "test"
 
-      const result = generateBranchName(
-        urlTemplate,
-        ticketInfo,
-        username,
-        defaultCategory
-      )
+      const result = generateName(urlTemplate, ticketInfo, username, defaultCategory)
 
       expect(result).toBe("testuser/test/123-test_ticket")
     })
@@ -35,12 +30,7 @@ describe("generator", () => {
       const urlTemplate = "{username}/{category}/{id}-{title}"
       const defaultCategory = "test"
 
-      const result = generateBranchName(
-        urlTemplate,
-        ticketInfo,
-        username,
-        defaultCategory
-      )
+      const result = generateName(urlTemplate, ticketInfo, username, defaultCategory)
 
       expect(result).toBe("testuser/feature/123-test_ticket")
     })
@@ -55,12 +45,7 @@ describe("generator", () => {
       const urlTemplate = "{username}/{id}-{title}"
       const defaultCategory = "feature"
 
-      const result = generateBranchName(
-        urlTemplate,
-        ticketInfo,
-        username,
-        defaultCategory
-      )
+      const result = generateName(urlTemplate, ticketInfo, username, defaultCategory)
 
       expect(result).toBe("testuser/123-")
     })
@@ -75,7 +60,7 @@ describe("generator", () => {
       const defaultCategory = "feature"
 
       expect(() =>
-        generateBranchName(urlTemplate, ticketInfo, username, defaultCategory)
+        generateName(urlTemplate, ticketInfo, username, defaultCategory)
       ).toThrow("Missing template fields: id")
     })
 
@@ -90,12 +75,7 @@ describe("generator", () => {
       const urlTemplate = "{username}/{category}/{id}-{title}"
       const defaultCategory = "test"
 
-      const result = generateBranchName(
-        urlTemplate,
-        ticketInfo,
-        username,
-        defaultCategory
-      )
+      const result = generateName(urlTemplate, ticketInfo, username, defaultCategory)
 
       expect(result).toBe("test.user/test/123-special_characters_spaces")
     })
@@ -106,12 +86,7 @@ describe("generator", () => {
       const urlTemplate = "{username}/static-path"
       const defaultCategory = "test"
 
-      const result = generateBranchName(
-        urlTemplate,
-        ticketInfo,
-        username,
-        defaultCategory
-      )
+      const result = generateName(urlTemplate, ticketInfo, username, defaultCategory)
 
       expect(result).toBe("testuser/static-path")
     })
@@ -127,12 +102,7 @@ describe("generator", () => {
       const urlTemplate = "{category}/{id}-{title}"
       const defaultCategory = "test"
 
-      const result = generateBranchName(
-        urlTemplate,
-        ticketInfo,
-        username,
-        defaultCategory
-      )
+      const result = generateName(urlTemplate, ticketInfo, username, defaultCategory)
 
       expect(result).toBe("feature/123-test_ticket_with_spaces")
     })
@@ -152,7 +122,7 @@ describe("generator", () => {
         replacement: "-"
       }
 
-      const result = generateBranchName(
+      const result = generateName(
         urlTemplate,
         ticketInfo,
         username,
@@ -178,7 +148,7 @@ describe("generator", () => {
         replacement: "_"
       }
 
-      const result = generateBranchName(
+      const result = generateName(
         urlTemplate,
         ticketInfo,
         username,
@@ -200,12 +170,7 @@ describe("generator", () => {
       const urlTemplate = "{username}/{category}/{id}-{title}"
       const defaultCategory = "test"
 
-      const result = generateBranchName(
-        urlTemplate,
-        ticketInfo,
-        username,
-        defaultCategory
-      )
+      const result = generateName(urlTemplate, ticketInfo, username, defaultCategory)
 
       expect(result).toBe("testuser/feature/123-test_ticket")
     })
@@ -222,12 +187,7 @@ describe("generator", () => {
         const urlTemplate = "{username}/{category}/{id}-{title}"
         const defaultCategory = "test"
 
-        const result = generateBranchName(
-          urlTemplate,
-          ticketInfo,
-          username,
-          defaultCategory
-        )
+        const result = generateName(urlTemplate, ticketInfo, username, defaultCategory)
 
         expect(result).toBe("testuser/feature/123-test_ticket_with_1_emoji")
       })
@@ -243,12 +203,7 @@ describe("generator", () => {
         const urlTemplate = "{username}/{category}/{id}-{title}"
         const defaultCategory = "test"
 
-        const result = generateBranchName(
-          urlTemplate,
-          ticketInfo,
-          username,
-          defaultCategory
-        )
+        const result = generateName(urlTemplate, ticketInfo, username, defaultCategory)
 
         expect(result).toBe(
           "testuser/feature/123-sparkles_new_feature_rocket_with_multiple_emoji_tada"
@@ -266,12 +221,7 @@ describe("generator", () => {
         const urlTemplate = "{username}/{category}/{id}-{title}"
         const defaultCategory = "test"
 
-        const result = generateBranchName(
-          urlTemplate,
-          ticketInfo,
-          username,
-          defaultCategory
-        )
+        const result = generateName(urlTemplate, ticketInfo, username, defaultCategory)
 
         expect(result).toBe("testuser/feature/123-rocket_sparkles_fire")
       })
@@ -287,12 +237,7 @@ describe("generator", () => {
         const urlTemplate = "{username}/{category}/{id}-{title}"
         const defaultCategory = "test"
 
-        const result = generateBranchName(
-          urlTemplate,
-          ticketInfo,
-          username,
-          defaultCategory
-        )
+        const result = generateName(urlTemplate, ticketInfo, username, defaultCategory)
 
         expect(result).toBe("testuser/bug/123-fix_bug_in_login_process")
       })
@@ -312,7 +257,7 @@ describe("generator", () => {
           replacement: "-"
         }
 
-        const result = generateBranchName(
+        const result = generateName(
           urlTemplate,
           ticketInfo,
           username,
@@ -336,12 +281,7 @@ describe("generator", () => {
         const urlTemplate = "{username}/{category}/{id}-{title}"
         const defaultCategory = "test"
 
-        const result = generateBranchName(
-          urlTemplate,
-          ticketInfo,
-          username,
-          defaultCategory
-        )
+        const result = generateName(urlTemplate, ticketInfo, username, defaultCategory)
 
         expect(result).toBe(
           "testuser/enhancement/123-rainbow_support_for_utf_8_characters_e_u_n_Ni_Hao_konnitiha_earth_asia"
@@ -359,12 +299,7 @@ describe("generator", () => {
         const urlTemplate = "{username}/{category}/{id}-{title}"
         const defaultCategory = "test"
 
-        const result = generateBranchName(
-          urlTemplate,
-          ticketInfo,
-          username,
-          defaultCategory
-        )
+        const result = generateName(urlTemplate, ticketInfo, username, defaultCategory)
 
         expect(result).toBe("testuser/feature/123-fix_issue_with_kangaroo_emoji")
       })
@@ -380,12 +315,7 @@ describe("generator", () => {
         const urlTemplate = "{username}/{category}/{id}-{title}"
         const defaultCategory = "test"
 
-        const result = generateBranchName(
-          urlTemplate,
-          ticketInfo,
-          username,
-          defaultCategory
-        )
+        const result = generateName(urlTemplate, ticketInfo, username, defaultCategory)
 
         // Both the regular emoji and the URL-encoded ones should be processed
         expect(result).toBe("testuser/bug/123-wrench_kangaroo_emoji_and_fox_face_emoji")
@@ -402,14 +332,59 @@ describe("generator", () => {
         const urlTemplate = "{username}/{category}/{id}-{title}"
         const defaultCategory = "test"
 
-        const result = generateBranchName(
-          urlTemplate,
-          ticketInfo,
-          username,
-          defaultCategory
-        )
+        const result = generateName(urlTemplate, ticketInfo, username, defaultCategory)
 
         expect(result).toContain("testuser/feature/123-kangaroo_fox_face_lion")
+      })
+    })
+
+    describe("capitalization in placeholders", () => {
+      it("should capitalize title when using {Title} placeholder", () => {
+        const ticketInfo: TicketInfo = {
+          url: "https://example.com",
+          id: "123",
+          title: "test title",
+          category: "feature"
+        }
+        const username = "testuser"
+        const template = "[{id}] {Title}"
+        const defaultCategory = "test"
+
+        const result = generateName(template, ticketInfo, username, defaultCategory)
+
+        expect(result).toBe("[123] Test_title")
+      })
+
+      it("should capitalize multiple placeholder types", () => {
+        const ticketInfo: TicketInfo = {
+          url: "https://example.com",
+          id: "123",
+          title: "test title",
+          category: "feature"
+        }
+        const username = "testuser"
+        const template = "{Username}/{Category}/{Id}-{Title}"
+        const defaultCategory = "test"
+
+        const result = generateName(template, ticketInfo, username, defaultCategory)
+
+        expect(result).toBe("Testuser/Feature/123-Test_title")
+      })
+
+      it("should handle mixed capitalized and non-capitalized placeholders", () => {
+        const ticketInfo: TicketInfo = {
+          url: "https://example.com",
+          id: "123",
+          title: "test title",
+          category: "feature"
+        }
+        const username = "testuser"
+        const template = "{username}/{Category}/{id}-{Title}"
+        const defaultCategory = "test"
+
+        const result = generateName(template, ticketInfo, username, defaultCategory)
+
+        expect(result).toBe("testuser/Feature/123-Test_title")
       })
     })
   })

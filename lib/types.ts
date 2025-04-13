@@ -14,17 +14,17 @@ export enum IconType {
   TREE = "tree"
 }
 
+export enum PopupMode {
+  BRANCH_NAME = "branchName",
+  PR_TITLE = "prTitle",
+  TICKET_URL = "ticketUrl"
+}
+
 export type IconPaths = Record<string, string>
 
 export type GeneratorOptions = {
   lower: boolean
   replacement: string
-}
-
-export type Template = {
-  id: string
-  name: string
-  template: string
 }
 
 export type Category = {
@@ -34,14 +34,17 @@ export type Category = {
 
 export type NonEmptyCategoryArray = [Category, ...Category[]]
 
-export type NonEmptyTemplateArray = [Template, ...Template[]]
+export type Templates = {
+  branchName: string
+  prTitle: string
+}
 
 export type Settings = {
   username: string
-  templates: NonEmptyTemplateArray
-  defaultTemplateId: string
+  templates: Templates
   categories: NonEmptyCategoryArray
-  defaultCategoryId: string
   enforceLowercase: boolean
   replacementCharacter: string
+  lastSelectedCategoryIndex?: number
+  lastSelectedMode?: PopupMode
 }

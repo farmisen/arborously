@@ -8,21 +8,24 @@ const defaultOptions = {
 
 const patterns = ["id", "title", "category"]
 
-export const generateBranchName = (
-  urlTemplate: string,
+export const generateName = (
+  template: string,
   ticketInfo: TicketInfo,
   username: string,
   category: string,
   options: GeneratorOptions = defaultOptions
-) => {
-  // should error if a template field is missing a value from TicketInfo
+): string => {
   const { id, title, category: ticketCategory } = ticketInfo
   const info = { id, title, category, username }
   const missing = [] as string[]
 
+  // Check for missing fields
   patterns.forEach((pattern) => {
+    const lowerPlaceholder = `{${pattern}}`
+    const upperPlaceholder = `{${pattern.charAt(0).toUpperCase() + pattern.slice(1)}}`
+
     if (
-      urlTemplate.includes(`{${pattern}}`) &&
+      (template.includes(lowerPlaceholder) || template.includes(upperPlaceholder)) &&
       info[pattern as keyof typeof info] === undefined
     ) {
       missing.push(pattern)
@@ -33,14 +36,42 @@ export const generateBranchName = (
     throw new Error(`Missing template fields: ${missing.join(", ")}`)
   }
 
-  const processField = (value: string | undefined) => {
+  const processField = (value: string | undefined, capitalize: boolean) => {
     if (value === undefined) return ""
-    return slugify(value, { lower: options.lower, replacement: options.replacement })
+    const processed = slugify(value, {
+      lower: capitalize ? false : options.lower,
+      replacement: options.replacement
+    })
+
+    if (capitalize && processed.length > 0) {
+      return processed.charAt(0).toUpperCase() + processed.slice(1)
+    }
+
+    return processed
   }
 
-  return urlTemplate
-    .replace("{id}", processField(id))
-    .replace("{title}", processField(title))
-    .replace("{username}", username) // Username is not processed
-    .replace("{category}", processField(ticketCategory ?? category))
+  // Replace regular and capitalized placeholders
+  let result = template
+
+  // Replace id placeholder
+  result = result
+    .replace("{id}", processField(id, false))
+    .replace("{Id}", processField(id, true))
+
+  // Replace title placeholder
+  result = result
+    .replace("{title}", processField(title, false))
+    .replace("{Title}", processField(title, true))
+
+  // Replace category placeholder
+  result = result
+    .replace("{category}", processField(ticketCategory ?? category, false))
+    .replace("{Category}", processField(ticketCategory ?? category, true))
+
+  // Replace username placeholder (not processed through slugify)
+  result = result
+    .replace("{username}", username)
+    .replace("{Username}", username.charAt(0).toUpperCase() + username.slice(1))
+
+  return result
 }
