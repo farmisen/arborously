@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import { generateName } from "../branch-name-generator"
+import { generateName } from "../name-generator"
 import { type GeneratorOptions, type TicketInfo } from "../types"
 
 describe("generator", () => {
@@ -385,6 +385,62 @@ describe("generator", () => {
         const result = generateName(template, ticketInfo, username, defaultCategory)
 
         expect(result).toBe("testuser/Feature/123-Test_title")
+      })
+    })
+
+    describe("skipSlugify option", () => {
+      it("should preserve special characters when skipSlugify is true", () => {
+        const ticketInfo: TicketInfo = {
+          url: "https://example.com",
+          id: "123",
+          title: "Special @ Characters & Spaces!",
+          category: "Feature"
+        }
+        const username = "testuser"
+        const template = "{id}-{title}"
+        const defaultCategory = "test"
+        const options: GeneratorOptions = {
+          lower: false,
+          replacement: "_",
+          skipSlugify: true
+        }
+
+        const result = generateName(
+          template,
+          ticketInfo,
+          username,
+          defaultCategory,
+          options
+        )
+
+        expect(result).toBe("123-Special @ Characters & Spaces!")
+      })
+
+      it("should still handle capitalization when skipSlugify is true", () => {
+        const ticketInfo: TicketInfo = {
+          url: "https://example.com",
+          id: "123",
+          title: "test title with special chars: @#$%",
+          category: "feature"
+        }
+        const username = "testuser"
+        const template = "{id}-{Title}"
+        const defaultCategory = "test"
+        const options: GeneratorOptions = {
+          lower: false,
+          replacement: "_",
+          skipSlugify: true
+        }
+
+        const result = generateName(
+          template,
+          ticketInfo,
+          username,
+          defaultCategory,
+          options
+        )
+
+        expect(result).toBe("123-Test title with special chars: @#$%")
       })
     })
   })

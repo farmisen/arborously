@@ -38,6 +38,16 @@ export const generateName = (
 
   const processField = (value: string | undefined, capitalize: boolean) => {
     if (value === undefined) return ""
+
+    // If skipSlugify is true, don't slugify the value, just handle capitalization
+    if (options.skipSlugify) {
+      if (capitalize && value.length > 0) {
+        return value.charAt(0).toUpperCase() + value.slice(1)
+      }
+      return value
+    }
+
+    // Otherwise, use slugify as before
     const processed = slugify(value, {
       lower: capitalize ? false : options.lower,
       replacement: options.replacement
