@@ -4,7 +4,7 @@ import { type TicketInfo } from "@/lib/types"
 export class TrelloProvider implements TicketProvider {
   private readonly TRELLO_CARD_REGEX =
     /^https?:\/\/(?:www\.)?trello\.com\/c\/([a-zA-Z0-9]+)(?:\/(\d+)(?:-([^/]+))?)?/
-  
+
   titleSelector = "#card-back-name"
 
   static getMatchPatterns(): string[] {
@@ -23,7 +23,8 @@ export class TrelloProvider implements TicketProvider {
     }
 
     // Use the title from the HTML element if available, otherwise fall back to URL parsing
-    const title = titleText || (match[3] ? match[3].split("?")[0].replace(/-/g, " ") : undefined)
+    const title =
+      titleText ?? (match[3] ? match[3].split("?")[0].replace(/-/g, " ") : undefined)
 
     return {
       url,
