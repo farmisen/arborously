@@ -4,11 +4,35 @@ A browser extension that automatically generates standardized git branch names f
 
 ## Features
 
-- Automatically extracts ticket information from Trello cards
-- Generates git branch names based on customizable templates
-- One-click copy to clipboard
-- Support for common git branch naming conventions
-- Cross-browser compatibility (Chrome, Firefox, Edge)
+- **Multi-platform Issue Tracking Support**:
+  - Automatically extracts ticket information from:
+    - Trello cards
+    - GitHub Issues
+    - Linear issues
+  
+- **Intelligent Content Generation**:
+  - Generates standardized git branch names using customizable templates
+  - Creates PR titles that follow consistent formatting
+  - Extracts and formats ticket URLs for easy sharing
+  
+- **Powerful Templating System**:
+  - Custom templates with placeholder support (`{id}`, `{title}`, `{category}`, `{username}`)
+  - Case handling (uppercase/lowercase) via template syntax (`{Title}` vs `{title}`)
+  - Configurable word separators (dash, underscore, etc.)
+  
+- **Category Management**:
+  - Organize and categorize your branches (feature, bugfix, hotfix, etc.)
+  - Quick category switching with keyboard shortcuts
+  - Remembers your last selected category
+
+- **Intuitive UX**:
+  - One-click copy to clipboard
+  - Toggle between branch name, PR title, and ticket URL modes
+  - Keyboard shortcuts for efficient workflow
+  - Maintains state between uses
+
+- **Cross-browser Support**:
+  - Works seamlessly in Chrome, Firefox, and Edge
 
 ## Installation
 
@@ -45,10 +69,35 @@ If you prefer to build the extension yourself, please see the [Development](#dev
 
 ## Usage
 
-1. Navigate to a Trello card
+### Basic Usage
+
+1. Navigate to a supported ticket (Trello card, GitHub issue, or Linear issue)
 2. Click on the Arborously extension icon in your browser toolbar
-3. Select a template and tag for your branch
-4. Click "Copy to Clipboard" to copy the generated branch name
+3. The extension will automatically:
+   - Extract ticket information (ID, title, etc.)
+   - Generate a branch name based on your template and selected category
+4. Click the copy button to copy the content to your clipboard
+
+### Advanced Features
+
+- **Switching Modes**: Press the `Space` key to toggle between:
+  - **Branch Name**: Formatted branch name for git operations
+  - **PR Title**: Properly formatted pull request title 
+  - **Ticket URL**: Clean URL for the current ticket
+
+- **Category Selection** (in Branch Name mode):
+  - Use `A` key to cycle to the previous category
+  - Use `D` key to cycle to the next category
+  - The extension remembers your last selected category
+
+- **Template Customization**:
+  - Go to the extension options page (right-click the extension icon and select "Options")
+  - Customize branch name and PR title templates with placeholders:
+    - `{id}` - The ticket ID (e.g., "SPE-342")
+    - `{title}` - The ticket title
+    - `{category}` - The selected category name (feature, bugfix, etc.)
+    - `{username}` - Your username
+  - Use capitalized placeholders (e.g., `{Title}`) for capitalized values
 
 ## Development
 
