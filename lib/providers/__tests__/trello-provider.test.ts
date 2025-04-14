@@ -88,5 +88,18 @@ describe("TrelloProvider", () => {
         "Not a valid Trello card URL"
       )
     })
+
+    it("should use the provided HTML title when available", () => {
+      const url = "https://trello.com/c/abcd1234/123-card-title-from-url"
+      const htmlTitle = "🇷🇺 Он должен обрабатывать нелатинские шрифты"
+      const result = provider.extractTicketInfo(url, htmlTitle)
+
+      expect(result).toEqual({
+        url,
+        id: "123",
+        title: htmlTitle,
+        metadata: { uuid: "abcd1234" }
+      })
+    })
   })
 })
