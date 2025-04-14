@@ -39,11 +39,16 @@ const handleTabChange = async (tabId: number) => {
       // Reset the icon if not a valid ticket URL
       const iconPaths = getIconPaths(IconType.TRUNK)
       await (browser.action ?? browser.browserAction).setIcon({ path: iconPaths })
+      // disable the tab
+      await (browser.action ?? browser.browserAction).disable(tab.id)
     }
+  } else {
+    // disable the tab
+    await (browser.action ?? browser.browserAction).disable(tab.id)
   }
 }
 
-const handleNotification = async (ticketInfo: TicketInfo) => {
+const handleTicketInfoNotification = async (ticketInfo: TicketInfo) => {
   // fetch the active tab
   const tabs = await browser.tabs.query({ active: true, currentWindow: true })
   if (tabs.length > 0) {
@@ -61,20 +66,37 @@ const handleNotification = async (ticketInfo: TicketInfo) => {
     // fetch the icon paths and update the icon
     const iconPaths = getIconPaths(IconType.TREE)
     await (browser.action ?? browser.browserAction).setIcon({ path: iconPaths })
+    // enable the tab
+    await (browser.action ?? browser.browserAction).enable(tab.id)
   }
 }
 
 // Listen for ticket info notifications
 onMessage("ticketInfoNotification", ({ data: ticketInfo }) => {
-  void (async () => await handleNotification(ticketInfo))()
+  void (async () => await handleTicketInfoNotification(ticketInfo))()
 })
 
 export default defineBackground(() => {
+  browser.runtime.onInstalled.addListener(() => {
+    void (async () => await (browser.action ?? browser.browserAction).disable())()
+  })
+
   browser.tabs.onUpdated.addListener((id) => {
     void (async () => await handleTabChange(id))()
   })
 
   browser.tabs.onActivated.addListener((info) => {
     void (async () => await handleTabChange(info.tabId))()
+  })
+
+  browser.tabs.onCreated.addListener((tab) => {
+    const tabId = tab.id
+    if (tabId) {
+      void (async () => await handleTabChange(tabId))()
+    }
+  })
+
+  browser.tabs.onAttached.addListener((tabId) => {
+    void (async () => await handleTabChange(tabId))()
   })
 })
