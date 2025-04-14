@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react"
 
-import { generateName } from "@/lib/branch-name-generator"
 import { getCurrentTicketInfoService } from "@/lib/current-ticket-info-service"
+import { generateName } from "@/lib/name-generator"
 import { getSettingsStorageService } from "@/lib/settings-storage-service"
 import { type Category, PopupMode, type Settings, type TicketInfo } from "@/lib/types"
 
@@ -111,7 +111,8 @@ export const usePopup = (): [PopupState, TemplateGenerationActions] => {
             categoryName,
             {
               lower: false,
-              replacement: " "
+              replacement: " ",
+              skipSlugify: true // Skip slugification for PR titles
             }
           )
         } catch (error) {

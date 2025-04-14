@@ -25,6 +25,7 @@ export type IconPaths = Record<string, string>
 export type GeneratorOptions = {
   lower: boolean
   replacement: string
+  skipSlugify?: boolean
 }
 
 export type Category = {
