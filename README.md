@@ -30,6 +30,7 @@ A browser extension that automatically generates standardized git branch names f
   - Toggle between branch name, PR title, and ticket URL modes
   - Keyboard shortcuts for efficient workflow
   - Maintains state between uses
+  - Press Enter to quickly copy the current value
 
 - **Cross-browser Support**:
   - Works seamlessly in Chrome, Firefox, and Edge
@@ -85,10 +86,13 @@ If you prefer to build the extension yourself, please see the [Development](#dev
   - **PR Title**: Properly formatted pull request title 
   - **Ticket URL**: Clean URL for the current ticket
 
-- **Category Selection** (in Branch Name mode):
-  - Use `A` key to cycle to the previous category
-  - Use `D` key to cycle to the next category
-  - The extension remembers your last selected category
+- **Keyboard Shortcuts**:
+  - **Category Selection** (in Branch Name mode):
+    - Use `A` key to cycle to the previous category
+    - Use `D` key to cycle to the next category
+  - Use `Space` key to toggle between modes
+  - Use `Enter` key to copy the current content to clipboard
+  - The extension remembers your last selected category and mode
 
 - **Template Customization**:
   - Go to the extension options page (right-click the extension icon and select "Options")
