@@ -16,6 +16,12 @@ const Popup = () => {
   const [description, setDescription] = useState("")
   const [copyDisabled, setCopyDisabled] = useState(true)
 
+  const copyToClipboard = async () => {
+    await navigator.clipboard.writeText(content)
+    setCopied(true)
+    setTimeout(() => window.close(), 2000)
+  }
+
   const [
     {
       branchName,
@@ -52,6 +58,12 @@ const Popup = () => {
         setCopied(false)
         // Prevent page scrolling
         e.preventDefault()
+      } else if (e.key === "Enter" && !copyDisabled) {
+        // Copy the content when Enter is pressed and content is available
+        copyToClipboard().catch((error) =>
+          console.error("Error copying to clipboard:", error)
+        )
+        e.preventDefault()
       }
     }
 
@@ -59,13 +71,7 @@ const Popup = () => {
     return () => {
       window.removeEventListener("keydown", handleKeyDown)
     }
-  }, [changeCategory, changeMode, mode])
-
-  const copyToClipboard = async () => {
-    await navigator.clipboard.writeText(content)
-    setCopied(true)
-    setTimeout(() => window.close(), 2000)
-  }
+  }, [changeCategory, changeMode, mode, copyDisabled, copyToClipboard])
 
   useEffect(() => {
     if (mode === PopupMode.BRANCH_NAME) {
@@ -127,7 +133,7 @@ const Popup = () => {
 
           {/* navigation */}
           <div className="text-sm text-muted-foreground">
-            <div className="flex justify-start gap-2">
+            <div className="flex justify-start gap-2 flex-wrap">
               <div className="flex gap-2">
                 <div>
                   Mode:{" "}
@@ -152,6 +158,12 @@ const Popup = () => {
                   </div>
                 </div>
               )}
+              <div className="flex gap-2">
+                <div>Copy:</div>
+                <div>
+                  (<kbd className="px-1 bg-muted rounded">enter</kbd>)
+                </div>
+              </div>
             </div>
           </div>
         </div>
