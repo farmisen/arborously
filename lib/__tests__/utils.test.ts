@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import { cleanUrl } from "../utils"
+import { cleanUrl, getTicketUrl } from "../utils"
 
 describe("cleanUrl", () => {
   it("should remove query parameters from URL", () => {
@@ -50,5 +50,22 @@ describe("cleanUrl", () => {
     expect(cleanUrl("https://example.com:8080/%F0%9F%A6%98")).toBe(
       "https://example.com:8080/🦘"
     )
+  })
+})
+
+describe("getTicketUrl", () => {
+  it("should clean the source URL when no canonical URL is provided", () => {
+    expect(
+      getTicketUrl({ url: "https://example.com/issues/123?tracking=value#comment" })
+    ).toBe("https://example.com/issues/123")
+  })
+
+  it("should preserve a provider canonical URL", () => {
+    expect(
+      getTicketUrl({
+        url: "https://bugzilla.mozilla.org/show_bug.cgi?list_id=123&id=1900000#c3",
+        canonicalUrl: "https://bugzilla.mozilla.org/show_bug.cgi?id=1900000"
+      })
+    ).toBe("https://bugzilla.mozilla.org/show_bug.cgi?id=1900000")
   })
 })

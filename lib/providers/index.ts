@@ -1,5 +1,6 @@
 import { type TicketProvidersService } from "@/lib/ticket-providers-service"
 
+import { BugzillaProvider } from "./bugzilla-provider"
 import { GithubIssuesProvider } from "./github-issues-provider"
 import { LinearProvider } from "./linear-provider"
 import { TrelloProvider } from "./trello-provider"
@@ -9,4 +10,5 @@ export const registerAllProviders = (service: TicketProvidersService) => {
   service.registerProvider(new TrelloProvider())
   service.registerProvider(new GithubIssuesProvider())
   service.registerProvider(new LinearProvider())
+  service.registerProvider(new BugzillaProvider())
 }

@@ -9,6 +9,7 @@ A browser extension that automatically generates standardized git branch names f
     - Trello cards
     - GitHub Issues
     - Linear issues
+    - Bugzilla issues on bugzilla.mozilla.org
   
 - **Intelligent Content Generation**:
   - Generates standardized git branch names using customizable templates
@@ -72,7 +73,7 @@ If you prefer to build the extension yourself, please see the [Development](#dev
 
 ### Basic Usage
 
-1. Navigate to a supported ticket (Trello card, GitHub issue, or Linear issue)
+1. Navigate to a supported ticket (Trello card, GitHub issue, Linear issue, or Bugzilla issue on bugzilla.mozilla.org)
 2. Click on the Arborously extension icon in your browser toolbar
 3. The extension will automatically:
    - Extract ticket information (ID, title, etc.)

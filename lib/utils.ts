@@ -1,6 +1,8 @@
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
 
+import { type TicketInfo } from "@/lib/types"
+
 export const cn = (...inputs: ClassValue[]) => {
   return twMerge(clsx(inputs))
 }
@@ -19,4 +21,10 @@ export const cleanUrl = (url: string): string => {
     console.error("Failed to clean URL:", error)
     return url
   }
+}
+
+export const getTicketUrl = (
+  ticketInfo: Pick<TicketInfo, "canonicalUrl" | "url">
+): string => {
+  return ticketInfo.canonicalUrl ?? cleanUrl(ticketInfo.url)
 }
