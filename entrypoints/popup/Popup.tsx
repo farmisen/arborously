@@ -7,7 +7,7 @@ import { Separator } from "@/components/ui/separator"
 import Icons from "@/entrypoints/popup/Icons"
 import { usePopup } from "@/entrypoints/popup/usePopup"
 import { PopupMode } from "@/lib/types"
-import { cleanUrl } from "@/lib/utils"
+import { getTicketUrl } from "@/lib/utils"
 
 const Popup = () => {
   // State for UI
@@ -83,7 +83,7 @@ const Popup = () => {
       setDescription("PR Title Generator")
       setCopyDisabled(!prTitle)
     } else if (mode === PopupMode.TICKET_URL && ticketInfo?.url) {
-      setContent(cleanUrl(ticketInfo.url))
+      setContent(getTicketUrl(ticketInfo))
       setDescription("Ticket URL")
       setCopyDisabled(!ticketInfo.url)
     }

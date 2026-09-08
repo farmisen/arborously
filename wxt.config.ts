@@ -1,6 +1,7 @@
 import tailwindcss from "@tailwindcss/vite"
 import { defineConfig } from "wxt"
 
+import { BugzillaProvider } from "./lib/providers/bugzilla-provider"
 import { GithubIssuesProvider } from "./lib/providers/github-issues-provider"
 import { LinearProvider } from "./lib/providers/linear-provider"
 import { TrelloProvider } from "./lib/providers/trello-provider"
@@ -25,7 +26,8 @@ export default defineConfig({
       "http://localhost/*",
       ...GithubIssuesProvider.getMatchPatterns(),
       ...TrelloProvider.getMatchPatterns(),
-      ...LinearProvider.getMatchPatterns()
+      ...LinearProvider.getMatchPatterns(),
+      ...BugzillaProvider.getMatchPatterns()
     ]
   },
   vite: () => ({
